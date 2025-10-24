@@ -146,6 +146,17 @@ class Stilt extends EngineObject {
   }
   update() {
     this.pos.x = this.player.pos.x;
+    this.reduceY();
+  }
+  reduceY() {
+    if (this.size.y > 0.2) {
+      const secondDelay = time % 2;
+      if (secondDelay == 0) {
+        this.size.y = this.size.y - 0.2;
+      }
+    } else {
+      this.size.y = 0.1;
+    }
   }
   grow() {
     if (this.isMaximized) return;
@@ -155,8 +166,8 @@ class Stilt extends EngineObject {
     // console.log(
     //   `size: ${this.player.size.y} pos: ${this.player.pos.y} respawn: ${this.player.respawnPos.y}`
     // );
-    this.size.y = Math.floor(this.size.y + 1);
-    this.pos.y = Math.floor(this.pos.y + 1);
+    this.size.y = this.size.y + 1;
+    this.pos.y = this.pos.y + 1;
     this.player.pos.y += this.player.size.y + 1;
 
     if (this.size >= STILT_HEIGHT_MAX) {
@@ -194,16 +205,20 @@ function gameInit() {
   enemy1.player = player;
   enemy2.player = player;
 
-  const item1 = new Item(vec2(10, 8));
+  const item1 = new Item(vec2(10, 4));
   item1.player = player;
-  const item2 = new Item(vec2(30, 8));
+  const item2 = new Item(vec2(20, 4));
   item2.player = player;
-  const item3 = new Item(vec2(50, 8));
+  const item3 = new Item(vec2(30, 4));
   item3.player = player;
-  const item4 = new Item(vec2(70, 8));
+  const item4 = new Item(vec2(40, 4));
   item4.player = player;
-  const item5 = new Item(vec2(90, 8));
+  const item5 = new Item(vec2(50, 6));
   item5.player = player;
+  const item6 = new Item(vec2(60, 6));
+  item6.player = player;
+  const item7 = new Item(vec2(70, 6));
+  item7.player = player;
 
   player.stiltObject = stilt;
   canvasClearColor = hsl(0.6, 0.3, 0.5);

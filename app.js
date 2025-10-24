@@ -138,7 +138,7 @@ class Enemy extends EngineObject {
 
 class Stilt extends EngineObject {
   constructor(pos, player) {
-    super(pos, vec2(2, 0.1), null, 0, ORANGE);
+    super(pos, vec2(2, 2), null, 0, ORANGE);
     this.setCollision();
     this.player = player;
     this.isMaximized = false;
@@ -177,23 +177,61 @@ class Stilt extends EngineObject {
 }
 
 class Item extends EngineObject {
-  constructor(pos) {
+  constructor(pos, index, itemSpawner) {
     super(pos, vec2(0.5, 0.5), null, 0, GREEN);
     this.collide = false;
     this.mass = 0;
     this.player = null;
+    this.itemSpawner = itemSpawner;
+    this.index = index;
   }
   update() {
     if (this.player) {
       if (this.isOverlapping(this.player.pos, this.player.size)) {
         this.player.activateStilts();
+        this.itemSpawner.removeItem(this.index);
         this.destroy();
       }
       super.update();
     }
   }
 }
+class ItemSpawner extends EngineObject {
+  constructor(player) {
+    super();
+    this.spawnRate = 5;
+    this.maxItems = 3;
+    this.itemSpawnPos = [
+      vec2(10, 4),
+      vec2(30, 8),
+      vec2(20, 4),
+      vec2(12, 8),
+      vec2(15, 6),
+    ];
+    this.player = player;
+    this.timer = this.spawnRate;
+    this.currentItems = [];
+  }
 
+  update() {
+    if (time % 5 == 0) {
+      if (this.currentItems.length >= this.maxItems) {
+        return;
+      }
+      this.currentItems.push(this.spawnItem());
+    }
+  }
+  removeItem(_index) {
+    this.currentItems.splice(_index, 1);
+  }
+  spawnItem() {
+    const randomIndex = randInt(0, this.itemSpawnPos.length);
+    const pos = this.itemSpawnPos[randomIndex];
+    const newItem = new Item(pos, this.currentItems.length, this);
+    newItem.player = this.player;
+    return newItem;
+  }
+}
 ////////////////////////////////////////////////////////////////////////
 function gameInit() {
   gravity.y = -0.05;
@@ -204,23 +242,9 @@ function gameInit() {
   const enemy2 = new Enemy(vec2(20, 10));
   enemy1.player = player;
   enemy2.player = player;
-
-  const item1 = new Item(vec2(10, 4));
-  item1.player = player;
-  const item2 = new Item(vec2(20, 4));
-  item2.player = player;
-  const item3 = new Item(vec2(30, 4));
-  item3.player = player;
-  const item4 = new Item(vec2(40, 4));
-  item4.player = player;
-  const item5 = new Item(vec2(50, 6));
-  item5.player = player;
-  const item6 = new Item(vec2(60, 6));
-  item6.player = player;
-  const item7 = new Item(vec2(70, 6));
-  item7.player = player;
-
   player.stiltObject = stilt;
+  new ItemSpawner(player);
+
   canvasClearColor = hsl(0.6, 0.3, 0.5);
 }
 

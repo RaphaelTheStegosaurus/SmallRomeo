@@ -30,8 +30,6 @@ class Player extends EngineObject {
     this.animationTimer = 0;
     this.stiltObject = stilt;
     this.respawnPos = pos;
-
-    // this.stiltObject = new Stilt(this.pos, this);
   }
   update() {
     const moveInput = keyDirection();
@@ -105,8 +103,6 @@ class Enemy extends EngineObject {
   }
 
   update() {
-    // console.log();
-
     const dx = this.player.pos.x - this.pos.x;
     const dy = this.player.pos.y - this.pos.y;
     const distSq = dx * dx + dy * dy;
@@ -153,13 +149,19 @@ class Stilt extends EngineObject {
   }
   grow() {
     if (this.isMaximized) return;
-    this.size.y = STILT_HEIGHT_MAX;
-    this.pos.y = this.respawnPos.y;
-    this.player.pos.y += this.player.respawnPos.y;
     // console.log(
     //   `size: ${this.size.y} pos: ${this.pos.y} respawn: ${this.respawnPos.y}`
     // );
-    this.isMaximized = true;
+    // console.log(
+    //   `size: ${this.player.size.y} pos: ${this.player.pos.y} respawn: ${this.player.respawnPos.y}`
+    // );
+    this.size.y = Math.floor(this.size.y + 1);
+    this.pos.y = Math.floor(this.pos.y + 1);
+    this.player.pos.y += this.player.size.y + 1;
+
+    if (this.size >= STILT_HEIGHT_MAX) {
+      this.isMaximized = true;
+    }
   }
 }
 
@@ -191,8 +193,18 @@ function gameInit() {
   const enemy2 = new Enemy(vec2(20, 10));
   enemy1.player = player;
   enemy2.player = player;
-  const item1 = new Item(vec2(10, 3));
+
+  const item1 = new Item(vec2(10, 8));
   item1.player = player;
+  const item2 = new Item(vec2(30, 8));
+  item2.player = player;
+  const item3 = new Item(vec2(50, 8));
+  item3.player = player;
+  const item4 = new Item(vec2(70, 8));
+  item4.player = player;
+  const item5 = new Item(vec2(90, 8));
+  item5.player = player;
+
   player.stiltObject = stilt;
   canvasClearColor = hsl(0.6, 0.3, 0.5);
 }

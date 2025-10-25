@@ -1,5 +1,6 @@
 "use strict";
 let backgroundTexture;
+let bg;
 const ListsSpriteFramePlayer = {
   idle: {
     index: 1,
@@ -69,16 +70,15 @@ class Level extends EngineObject {
   }
   createGround() {
     const pos = vec2();
+    const levelSize = vec2(100, 2);
     const tileLayer = new TileCollisionLayer(
-      pos,
-      vec2(256, 2),
+      vec2(0, -1),
+      levelSize,
       new TileInfo(vec2(0, 0), vec2(16, 16), 0)
     );
-    const groundHeight = 5;
-    for (pos.x = tileLayer.size.x; pos.x--; ) {
-      const levelHeight = groundHeight;
-      for (pos.y = tileLayer.size.y; pos.y--; ) {
-        if (pos.y > levelHeight) continue;
+    const groundLevelY = 5;
+    for (pos.x = 0; pos.x < levelSize.x; pos.x++) {
+      for (pos.y = 0; pos.y < groundLevelY; pos.y++) {
         tileLayer.setData(pos, new TileLayerData(1));
         tileLayer.setCollisionData(pos);
       }
@@ -86,6 +86,14 @@ class Level extends EngineObject {
     tileLayer.redraw();
   }
 }
+class Boundary extends EngineObject {
+  constructor(pos, size) {
+    super(pos, size, new TileInfo(vec2(0, 0), vec2(16, 16), 0));
+    this.setCollision();
+    this.mass = 0;
+  }
+}
+
 class Enemy extends EngineObject {
   constructor(pos) {
     super(pos, vec2(1.5, 1.5), null, 0, BLUE);
@@ -200,11 +208,14 @@ class ItemSpawner extends EngineObject {
   constructor(player) {
     super();
     this.spawnRate = 5;
-    this.maxItems = 3;
+    this.maxItems = 5;
     this.itemSpawnPos = [
       vec2(10, 4),
+      vec2(9, 8),
       vec2(30, 8),
       vec2(20, 4),
+      vec2(25, 10),
+      vec2(4, 8),
       vec2(12, 8),
       vec2(15, 6),
     ];
@@ -236,6 +247,12 @@ class ItemSpawner extends EngineObject {
 function gameInit() {
   gravity.y = -0.05;
   new Level();
+  const wallCenterY = 20 / 2;
+  const wallHeight = 20;
+  const wallWidth = 1;
+  new Boundary(vec2(0.5, wallCenterY), vec2(wallWidth, wallHeight));
+  new Boundary(vec2(100 - 0.5, wallCenterY), vec2(wallWidth, wallHeight));
+
   const player = new Player(vec2(5, 6));
   const stilt = new Stilt(vec2(5, 4), player);
   const enemy1 = new Enemy(vec2(25, 6));
@@ -244,8 +261,15 @@ function gameInit() {
   enemy2.player = player;
   player.stiltObject = stilt;
   new ItemSpawner(player);
-
   canvasClearColor = hsl(0.6, 0.3, 0.5);
+  // const bg = new TileLayer(
+  //   vec2(0, 0),
+  //   canvasMaxSize,
+  //   new TileInfo(vec2(0, 0), vec2(900, 700), 2)
+  // );
+  bg = tile(vec2(0, 0), canvasMaxSize, 2);
+  // console.log(tile(vec2(0, 0), canvasMaxSize, 2));
+  // console.log(mainCanvasSize.scale(0.5));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -255,7 +279,9 @@ function gameUpdate() {}
 function gameUpdatePost() {}
 
 ///////////////////////////////////////////////////////////////////////////////
-function gameRender() {}
+function gameRender() {
+  drawTile(vec2(30, 12), vec2(80, 40), bg);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 function gameRenderPost() {
@@ -267,4 +293,5 @@ function gameRenderPost() {
 engineInit(gameInit, gameUpdate, gameUpdatePost, gameRender, gameRenderPost, [
   "tiles.png",
   "/media/player/john_idle.png",
+  "/media/bg/Layer.png",
 ]);

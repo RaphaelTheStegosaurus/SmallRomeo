@@ -211,12 +211,32 @@ class Item extends EngineObject {
     this.player = null;
     this.itemSpawner = itemSpawner;
     this.index = index;
+    this.sound = new Sound([
+      ,
+      ,
+      539,
+      0,
+      0.04,
+      0.29,
+      1,
+      1.92,
+      ,
+      ,
+      567,
+      0.02,
+      0.02,
+      ,
+      ,
+      ,
+      0.04,
+    ]);
   }
   update() {
     if (this.player) {
       if (this.isOverlapping(this.player.pos, this.player.size)) {
         this.player.activateStilts();
         this.itemSpawner.removeItem(this.index);
+        this.sound.play();
         this.destroy();
       }
       super.update();

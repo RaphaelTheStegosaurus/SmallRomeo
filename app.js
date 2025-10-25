@@ -14,7 +14,6 @@ const STILT_HEIGHT_MIN = 0.01;
 const STILT_HEIGHT_MAX = 3.0;
 const STILT_SIZE_X = 1.5;
 const STILT_SHRINK_RATE = 5.0;
-// let player;
 class Player extends EngineObject {
   constructor(pos, stilt) {
     const tileInfo = new TileInfo(
@@ -33,6 +32,8 @@ class Player extends EngineObject {
     this.respawnPos = pos;
   }
   update() {
+    console.log(this.pos.y);
+
     const moveInput = keyDirection();
     this.velocity.x += moveInput.x * (this.groundObject ? 0.1 : 0.01);
     if (moveInput.x < 0) this.mirror = true;
@@ -40,8 +41,26 @@ class Player extends EngineObject {
     //[ ] arreglar animation con un sprite justo a los sprites
     // this.animate();
 
-    if (this.groundObject && moveInput.y > 0) this.velocity.y = 0.9; // jump
-    cameraPos = vec2(this.pos.x, 9);
+    if (this.groundObject && moveInput.y > 0) this.velocity.y = 0.9;
+    cameraPos = vec2(
+      this.getCameraPosX(this.pos.x),
+      this.getCameraPosY(this.pos.y)
+    );
+  }
+  getCameraPosX(_posX) {
+    if (_posX < 20) {
+      return 19;
+    } else if (_posX > 80) {
+      return 81;
+    } else {
+      return _posX;
+    }
+  }
+  getCameraPosY(_posY) {
+    if (_posY < 9) {
+      return 9;
+    }
+    return _posY;
   }
   animate() {
     const animationData = ListsSpriteFramePlayer.idle;

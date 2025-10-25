@@ -1,0 +1,50 @@
+# To-Do List
+
+- [ ] Agregar UI:
+  - [ ] UI Mientras Juegas:
+    - [ ] Agregar una Barra que indique el estado de los stilt.
+    - [ ] Agregar un contador de tiempo que has durado.
+    - [ ] Botón de Pausa
+  - [ ] Menu de Pausa
+    - [ ] Botón de Regear a partida
+    - [ ] Botón de Regresar a Menu Principal
+    - [ ] Botón de Reiniciar.
+  - [ ] Menu con Start
+    - [ ] Botón de Comenzar Juego
+    - [ ] Botón de Créditos
+- [ ] Mecánicas del juego
+  - [ ] Agregar perros en ciertas areas al azar
+  - [ ] Agregar ciertos Maderas en ciertas zonas
+  - [ ] Agregar mecánica de perder
+  - [ ] Agregar mecánica de bajar madera mas rápido si adquiere un perro y este desaparece del escenario pero aumenta el valor de velocidad.
+  - [ ] Agregar mecánica de bajar mas rápido si te acercas a la herramienta que lanza el suegro que esta desaparezca del escenario pero aumente el valor de tamaño de corte.
+  - [ ] Agregar mecanica de ganar
+    - [ ] Crear objeto de ganar
+    - [ ] Crear barda para alojar el jugador
+    - [ ] Crear balcon
+    - [ ] Crear colisiones de el 
+- [ ] Agregar Sprites Oficiales
+  - [ ] Crear Sprites para el Personaje
+    - [ ] Sprite para Moverse
+    - [ ] Sprite para Estando Quieto
+    - [ ] Sprite para cuando estas apunto de perder
+    - [ ] Sprite cuando estas cerca de tu amada
+  - [ ] Sprites para perros
+    - [ ] Sprite de Chihuahua enojado y quieto
+    - [ ] Sprite de Chihuahua arrojándose al remolino
+    - [ ] Sprite de animación de remolino de perros
+  - [ ] Sprite de Escenario
+    - [ ] Sprite de Árbol
+    - [ ] Sprite de Ramas
+    - [ ] Sprite de Paredes del exterior de la casa
+    - [ ] Sprite de Paredes de la casa
+    - [ ] Sprite de Jardín
+      - [ ] Sprite de bancos
+      - [ ] Sprite de Mesa
+      - [ ] Sprite de Plantas
+      - [ ] Sprite de Arbustos
+      - [ ] Sprites Otros detalles
+  - [ ] Sprite de story animation
+    - [ ] Sprite de escena de Introducción
+    - [ ] Sprite de escena de Perder
+    - [ ] Sprite de escena de Ganar

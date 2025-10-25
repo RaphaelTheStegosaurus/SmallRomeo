@@ -14,6 +14,16 @@ const STILT_HEIGHT_MIN = 0.01;
 const STILT_HEIGHT_MAX = 3.0;
 const STILT_SIZE_X = 1.5;
 const STILT_SHRINK_RATE = 5.0;
+
+///////////
+//Mis variables globales
+let current_stilt_height;
+let velocity_time = 10;
+let velocity_unity = 0.1;
+let uiRoot;
+let textDemo;
+///////////
+
 class Player extends EngineObject {
   constructor(pos, stilt) {
     const tileInfo = new TileInfo(
@@ -32,8 +42,6 @@ class Player extends EngineObject {
     this.respawnPos = pos;
   }
   update() {
-    console.log(this.pos.y);
-
     const moveInput = keyDirection();
     this.velocity.x += moveInput.x * (this.groundObject ? 0.1 : 0.01);
     if (moveInput.x < 0) this.mirror = true;
@@ -121,7 +129,6 @@ class Enemy extends EngineObject {
     this.chaseSpeed = 0.08;
     this.range = 5;
     this.direction = 1;
-
     this.detectionRange = 8;
     this.player = null;
     this.state = "patrol";
@@ -135,7 +142,7 @@ class Enemy extends EngineObject {
     const distSq = dx * dx + dy * dy;
     const detectionRangeSq = this.detectionRange * this.detectionRange;
 
-    if (distSq < detectionRangeSq && this.player.pos.y < this.pos.y + 2) {
+    if (distSq < detectionRangeSq) {
       this.state = "chase";
     } else if (distSq >= detectionRangeSq && this.state === "chase") {
       this.state = "patrol";
@@ -161,11 +168,12 @@ class Enemy extends EngineObject {
     const dirToPlayer = sign(this.player.pos.x - this.pos.x);
     this.velocity.x = dirToPlayer * this.chaseSpeed;
   }
+  attack() {}
 }
 
 class Stilt extends EngineObject {
   constructor(pos, player) {
-    super(pos, vec2(2, 2), null, 0, ORANGE);
+    super(pos, vec2(1, 2), null, 0, ORANGE);
     this.setCollision();
     this.player = player;
     this.isMaximized = false;
@@ -173,13 +181,14 @@ class Stilt extends EngineObject {
   }
   update() {
     this.pos.x = this.player.pos.x;
+    current_stilt_height = this.size.y;
     this.reduceY();
   }
   reduceY() {
     if (this.size.y > 0.2) {
-      const secondDelay = time % 2;
+      const secondDelay = time % velocity_time;
       if (secondDelay == 0) {
-        this.size.y = this.size.y - 0.2;
+        this.size.y = this.size.y - velocity_unity;
       }
     } else {
       this.size.y = 0.1;
@@ -309,10 +318,23 @@ function gameInit() {
   bg = tile(vec2(0, 0), canvasMaxSize, 2);
   // console.log(tile(vec2(0, 0), canvasMaxSize, 2));
   // console.log(mainCanvasSize.scale(0.5));
+
+  //ui
+  new UISystemPlugin();
+  uiRoot = new UIObject(vec2(0, 0), vec2(1, 1));
+
+  textDemo = new UIText(vec2(600, 100), vec2(600, 100));
+  textDemo.textColor = WHITE;
+  textDemo.textLineWidth = 8;
+  // console.log(textDemo);
+  uiRoot.addChild(textDemo);
+  // const uiMenu = new UIObject(mainCanvasSize.scale(0.5), vec2(600, 450));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-function gameUpdate() {}
+function gameUpdate() {
+  textDemo.text = `stilt height: ${current_stilt_height}`;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 function gameUpdatePost() {}

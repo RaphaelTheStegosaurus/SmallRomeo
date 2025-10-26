@@ -22,6 +22,7 @@ let velocity_time = 10;
 let velocity_unity = 0.1;
 let uiRoot;
 let textDemo;
+let isVelocityTimeIsMin = false;
 ///////////
 
 class Player extends EngineObject {
@@ -40,6 +41,7 @@ class Player extends EngineObject {
     this.animationTimer = 0;
     this.stiltObject = stilt;
     this.respawnPos = pos;
+    this.JumpSound = new Sound([, , 1e3, , , 0.5, , , , , 99, 0.01, 0.03]);
   }
   update() {
     const moveInput = keyDirection();
@@ -49,7 +51,10 @@ class Player extends EngineObject {
     //[ ] arreglar animation con un sprite justo a los sprites
     // this.animate();
 
-    if (this.groundObject && moveInput.y > 0) this.velocity.y = 0.9;
+    if (this.groundObject && moveInput.y > 0) {
+      this.JumpSound.play();
+      this.velocity.y = 0.9;
+    }
     cameraPos = vec2(
       this.getCameraPosX(this.pos.x),
       this.getCameraPosY(this.pos.y)
@@ -134,6 +139,8 @@ class Enemy extends EngineObject {
     this.state = "patrol";
     this.leftBound = pos.x - this.range / 2;
     this.rightBound = pos.x + this.range / 2;
+    this.spawner = null;
+    this.spawnX = pos.x;
   }
 
   update() {
@@ -177,13 +184,89 @@ class Enemy extends EngineObject {
           this.player.stiltObject.size
         )
       ) {
-        velocity_time -= 1;
+        if (this.spawner) {
+          this.spawner.notifyDestroyed(this.spawnX);
+        }
+        if (velocity_time > 1) {
+          velocity_time -= 1;
+        }
+        if (velocity_time == 1 && !isVelocityTimeIsMin) {
+          isVelocityTimeIsMin = true;
+          console.log("Ya devoran a cada segundo ");
+        }
         this.destroy();
       }
     }
   }
 }
+class EnemySpawner extends EngineObject {
+  constructor(player) {
+    super();
+    this.player = player;
+    this.spawnInterval = 10;
+    this.timer = this.spawnInterval;
+    this.activePositions = [];
+    this.maxEnemies = 4;
+    this.minX = 5;
+    this.maxX = 95;
+  }
+  update() {
+    if (this.activePositions.length >= this.maxEnemies) {
+      this.timer = this.spawnInterval;
+      return;
+    }
+    this.timer -= time;
+    if (this.timer <= 0) {
+      this.spawnEnemy();
+      this.timer = this.spawnInterval;
+    }
+  }
+  getRandomXPosition() {
+    let attempts = 0;
+    const maxAttempts = 10;
+    while (attempts < maxAttempts) {
+      const randomX = rand(this.minX, this.maxX);
+      const minDistance = 10;
+      let isTooClose = false;
+      for (const activeX of this.activePositions) {
+        if (Math.abs(activeX - randomX) < minDistance) {
+          isTooClose = true;
+          break;
+        }
+      }
+      if (!isTooClose) {
+        return randomX;
+      }
+      attempts++;
+    }
+    return null;
+  }
 
+  spawnEnemy() {
+    const xPos = this.getRandomXPosition();
+    if (xPos === null) return;
+    const pos = vec2(xPos, 3);
+    const newEnemy = new Enemy(pos);
+    newEnemy.player = this.player;
+    newEnemy.spawner = this;
+    newEnemy.spawnX = xPos;
+    this.activePositions.push(xPos);
+  }
+  notifyDestroyed(xPos) {
+    const index = this.activePositions.indexOf(xPos);
+    if (index !== -1) {
+      this.activePositions.splice(index, 1);
+    }
+  }
+}
+class WoodTools extends EngineObject {
+  constructor(pos) {
+    super(pos, vec2(1, 1), null, 0, RED);
+    this.setCollision();
+    this.index = index;
+    // this.sound =
+  }
+}
 class Stilt extends EngineObject {
   constructor(pos, player) {
     super(pos, vec2(1, 2), null, 0, ORANGE);
@@ -191,6 +274,24 @@ class Stilt extends EngineObject {
     this.player = player;
     this.isMaximized = false;
     this.respawnPos = pos;
+    this.sound = new Sound([
+      ,
+      ,
+      418,
+      0,
+      0.02,
+      0.2,
+      4,
+      1.15,
+      -8.5,
+      ,
+      ,
+      ,
+      ,
+      0.7,
+      ,
+      0.1,
+    ]);
   }
   update() {
     this.pos.x = this.player.pos.x;
@@ -218,6 +319,7 @@ class Stilt extends EngineObject {
     this.size.y = this.size.y + 1;
     this.pos.y = this.pos.y + 1;
     this.player.pos.y += this.player.size.y + 1;
+    this.sound.play();
 
     if (this.size >= STILT_HEIGHT_MAX) {
       this.isMaximized = true;
@@ -316,10 +418,7 @@ function gameInit() {
 
   const player = new Player(vec2(5, 6));
   const stilt = new Stilt(vec2(5, 4), player);
-  const enemy1 = new Enemy(vec2(25, 6));
-  const enemy2 = new Enemy(vec2(20, 10));
-  enemy1.player = player;
-  enemy2.player = player;
+  new EnemySpawner(player);
   player.stiltObject = stilt;
   new ItemSpawner(player);
   canvasClearColor = hsl(0.6, 0.3, 0.5);

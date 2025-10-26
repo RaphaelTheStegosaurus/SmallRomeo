@@ -13,11 +13,11 @@
     - [ ] Botón de Comenzar Juego
     - [ ] Botón de Créditos
 - [ ] Mecánicas del juego
-  - [ ] Agregar perros en ciertas areas al azar
+  - [x] Agregar perros en ciertas areas al azar
   - [ ] Agregar ciertos Maderas en ciertas zonas
   - [ ] Agregar mecánica de perder
-  - [ ] Agregar mecánica de bajar madera mas rápido si adquiere un perro y este desaparece del escenario pero aumenta el valor de velocidad.
-  - [ ] Agregar mecánica de bajar mas rápido si te acercas a la herramienta que lanza el suegro que esta desaparezca del escenario pero aumente el valor de tamaño de corte.
+  - [x] Agregar mecánica de bajar madera mas rápido si adquiere un perro y este desaparece del escenario pero aumenta el valor de velocidad.
+  - [x] Agregar mecánica de bajar mas rápido si te acercas a la herramienta que lanza el suegro que esta desaparezca del escenario pero aumente el valor de tamaño de corte.
   - [ ] Agregar mecanica de ganar
     - [ ] Crear objeto de ganar
     - [ ] Crear barda para alojar el jugador

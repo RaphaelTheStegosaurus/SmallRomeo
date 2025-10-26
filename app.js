@@ -61,7 +61,7 @@ class Player extends EngineObject {
 
     if (this.groundObject && moveInput.y > 0) {
       this.JumpSound.play();
-      this.velocity.y = 0.9;
+      this.velocity.y = 0.75;
     }
     cameraPos = vec2(
       this.getCameraPosX(this.pos.x),
@@ -288,7 +288,7 @@ class WoodTool extends EngineObject {
           this.player.stiltObject.size
         )
       ) {
-        if (velocity_unity < 1.0) {
+        if (velocity_unity < 1.3) {
           velocity_unity += WOODTOOL_VALUE;
         }
         if (velocity_unity > 1 && !isVelocityUnityIsMax) {
@@ -308,7 +308,7 @@ class WoodToolSpawner extends EngineObject {
     this.player = player;
     this.spawnInterval = 5;
     this.timer = 0;
-    this.maxTools = 2;
+    this.maxTools = 3;
     this.activePositions = [];
     this.minX = 10;
     this.maxX = 90;
@@ -457,12 +457,12 @@ class ItemSpawner extends EngineObject {
     this.player = player;
     this.spawnInterval = 5;
     this.timer = this.spawnInterval;
-    this.maxItems = 10;
+    this.maxItems = 18;
     this.minX = 10;
-    this.maxX = 90;
-    this.minY = 6;
-    this.maxY = 25;
-    this.minDistance = 10;
+    this.maxX = 85;
+    this.minY = 8;
+    this.maxY = 30;
+    this.minDistance = 8;
     this.activePositions = [];
   }
   update() {
@@ -554,14 +554,14 @@ class Goal extends EngineObject {
 function gameInit() {
   gravity.y = -0.05;
   new Level();
-  const wallCenterY = 20 / 2;
-  const wallHeight = 20;
+  const wallHeight = 40;
+  const wallCenterY = wallHeight / 2;
   const wallWidth = 1;
   new Boundary(vec2(0.5, wallCenterY), vec2(wallWidth, wallHeight));
   new Boundary(vec2(100 - 0.5, wallCenterY), vec2(wallWidth, wallHeight));
   const player = new Player(vec2(5, STILT_STAR_HEIGTH + 6));
   const stilt = new Stilt(vec2(5, STILT_STAR_HEIGTH + 2), player);
-  new Goal(vec2(15, wallHeight / 2), player);
+  new Goal(vec2(97, wallHeight - 10), player);
   new EnemySpawner(player);
   new WoodToolSpawner(player);
   player.stiltObject = stilt;

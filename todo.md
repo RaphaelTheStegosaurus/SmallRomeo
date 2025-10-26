@@ -14,7 +14,7 @@
     - [ ] Botón de Créditos
 - [ ] Mecánicas del juego
   - [x] Agregar perros en ciertas areas al azar
-  - [ ] Agregar ciertos Maderas en ciertas zonas
+  - [x] Agregar ciertos Maderas en ciertas zonas
   - [ ] Agregar mecánica de perder
   - [x] Agregar mecánica de bajar madera mas rápido si adquiere un perro y este desaparece del escenario pero aumenta el valor de velocidad.
   - [x] Agregar mecánica de bajar mas rápido si te acercas a la herramienta que lanza el suegro que esta desaparezca del escenario pero aumente el valor de tamaño de corte.

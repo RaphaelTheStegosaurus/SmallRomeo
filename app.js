@@ -163,6 +163,7 @@ class Enemy extends EngineObject {
     } else {
       this.patrolUpdate();
     }
+    this.attack();
     super.update();
   }
   patrolUpdate() {
@@ -177,28 +178,31 @@ class Enemy extends EngineObject {
   chaseUpdate() {
     const dirToPlayer = sign(this.player.pos.x - this.pos.x);
     this.velocity.x = dirToPlayer * this.chaseSpeed;
-    this.attack();
   }
   attack() {
-    if (this.player.stiltObject) {
-      if (
-        this.isOverlapping(
-          this.player.stiltObject.pos,
-          this.player.stiltObject.size
-        )
-      ) {
-        if (this.spawner) {
-          this.spawner.notifyDestroyed(this.spawnX);
-        }
-        if (velocity_time > 1) {
-          velocity_time -= 1;
-        }
-        if (velocity_time == 1 && !isVelocityTimeIsMin) {
-          isVelocityTimeIsMin = true;
-          console.log("Ya devoran a cada segundo ");
-        }
-        this.destroy();
+    const stilt = this.player.stiltObject;
+    if (!stilt) {
+      return;
+    }
+    const enemyLeft = this.pos.x;
+    const enemyRight = this.pos.x + this.size.x;
+    const stiltLeft = stilt.pos.x;
+    const stiltRight = stilt.pos.x + stilt.size.x;
+    const isOverlappingX = enemyRight > stiltLeft && enemyLeft < stiltRight;
+    console.log(isOverlappingX);
+
+    if (isOverlappingX) {
+      if (this.spawner) {
+        this.spawner.notifyDestroyed(this.spawnX);
       }
+      if (velocity_time > 1) {
+        velocity_time -= 1;
+      }
+      if (velocity_time == 1 && !isVelocityTimeIsMin) {
+        isVelocityTimeIsMin = true;
+        console.log("Ya devoran a cada segundo ");
+      }
+      this.destroy();
     }
   }
 }
@@ -432,7 +436,6 @@ class Item extends EngineObject {
     if (this.player && this.spawner) {
       if (this.isOverlapping(this.player.pos, this.player.size)) {
         this.player.activateStilts();
-        // Notificar al generador ANTES de destruirse
         this.spawner.notifyDestroyed(this.spawnPos);
         this.sound.play();
         this.destroy();

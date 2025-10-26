@@ -26,6 +26,11 @@ let velocity_unity = 0.0;
 let uiRoot;
 let textDemo;
 let isVelocityTimeIsMin = false;
+let isVelocityUnityIsMax = false;
+let isGameOver = false;
+let isYouWin = false;
+let isPause = false;
+let isStar = true;
 ///////////
 
 class Player extends EngineObject {
@@ -128,7 +133,6 @@ class Boundary extends EngineObject {
     this.mass = 0;
   }
 }
-
 class Enemy extends EngineObject {
   constructor(pos) {
     super(pos, vec2(1.5, 1.5), null, 0, BLUE);
@@ -189,8 +193,6 @@ class Enemy extends EngineObject {
     const stiltLeft = stilt.pos.x;
     const stiltRight = stilt.pos.x + stilt.size.x;
     const isOverlappingX = enemyRight > stiltLeft && enemyLeft < stiltRight;
-    console.log(isOverlappingX);
-
     if (isOverlappingX) {
       if (this.spawner) {
         this.spawner.notifyDestroyed(this.spawnX);
@@ -264,6 +266,7 @@ class EnemySpawner extends EngineObject {
     if (index !== -1) {
       this.activePositions.splice(index, 1);
     }
+    this.timer = this.spawnInterval;
   }
 }
 class WoodTool extends EngineObject {
@@ -285,8 +288,12 @@ class WoodTool extends EngineObject {
           this.player.stiltObject.size
         )
       ) {
-        if (velocity_unity < 1) {
+        if (velocity_unity < 1.0) {
           velocity_unity += WOODTOOL_VALUE;
+        }
+        if (velocity_unity > 1 && !isVelocityUnityIsMax) {
+          isVelocityUnityIsMax = true;
+          console.log("Están destruyendo lo máximo");
         }
         this.spawner.notifyDestroyed(this.spawnX);
         this.destroy();
@@ -299,8 +306,8 @@ class WoodToolSpawner extends EngineObject {
   constructor(player) {
     super();
     this.player = player;
-    this.spawnInterval = 15;
-    this.timer = this.spawnInterval;
+    this.spawnInterval = 5;
+    this.timer = 0;
     this.maxTools = 2;
     this.activePositions = [];
     this.minX = 10;
@@ -352,9 +359,9 @@ class WoodToolSpawner extends EngineObject {
     if (index !== -1) {
       this.activePositions.splice(index, 1);
     }
+    this.timer = this.spawnInterval;
   }
 }
-
 class Stilt extends EngineObject {
   constructor(pos, player) {
     super(pos, vec2(1, STILT_STAR_HEIGTH), null, 0, ORANGE);
@@ -392,6 +399,7 @@ class Stilt extends EngineObject {
         this.size.y = this.size.y - velocity_unity;
       }
     } else {
+      isGameOver = true;
       this.size.y = 0.1;
     }
   }
@@ -402,7 +410,6 @@ class Stilt extends EngineObject {
     this.sound.play();
   }
 }
-
 class Item extends EngineObject {
   constructor(pos) {
     super(pos, vec2(0.5, 0.5), null, 0, GREEN);
@@ -450,7 +457,7 @@ class ItemSpawner extends EngineObject {
     this.player = player;
     this.spawnInterval = 5;
     this.timer = this.spawnInterval;
-    this.maxItems = 8;
+    this.maxItems = 10;
     this.minX = 10;
     this.maxX = 90;
     this.minY = 6;
@@ -508,8 +515,41 @@ class ItemSpawner extends EngineObject {
     if (index !== -1) {
       this.activePositions.splice(index, 1);
     }
+    this.timer = this.spawnInterval;
   }
 }
+class Goal extends EngineObject {
+  constructor(pos, player) {
+    super(pos, vec2(4, 0.5), null, 0, GREEN);
+    this.mass = 0;
+    this.collide = true;
+    this.setCollision();
+    this.player = player;
+  }
+  update() {
+    if (this.OverLappingX()) {
+      if (
+        this.pos.y < this.player.pos.y &&
+        this.pos.y + 2 > this.player.pos.y
+      ) {
+        isYouWin = true;
+      }
+    }
+  }
+  OverLappingX() {
+    const goalLeft = this.pos.x;
+    const goalRight = this.pos.x + this.size.x;
+    const playerLeft = this.player.pos.x;
+    const playerRight = this.player.pos.x + this.player.size.x;
+    const isCenterToRight = goalLeft < playerLeft;
+    const isCenterToLeft = goalRight > playerRight;
+    if (isCenterToLeft && isCenterToRight) {
+      return true;
+    }
+    return false;
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////
 function gameInit() {
   gravity.y = -0.05;
@@ -519,9 +559,9 @@ function gameInit() {
   const wallWidth = 1;
   new Boundary(vec2(0.5, wallCenterY), vec2(wallWidth, wallHeight));
   new Boundary(vec2(100 - 0.5, wallCenterY), vec2(wallWidth, wallHeight));
-
   const player = new Player(vec2(5, STILT_STAR_HEIGTH + 6));
   const stilt = new Stilt(vec2(5, STILT_STAR_HEIGTH + 2), player);
+  new Goal(vec2(15, wallHeight / 2), player);
   new EnemySpawner(player);
   new WoodToolSpawner(player);
   player.stiltObject = stilt;
@@ -551,9 +591,17 @@ function gameInit() {
 
 ///////////////////////////////////////////////////////////////////////////////
 function gameUpdate() {
-  textDemo.text = `stilt height: ${parseFloat(current_stilt_height).toFixed(
-    2
-  )} y baja a ${parseFloat(velocity_unity).toFixed(1)}/${velocity_time}s`;
+  if (isYouWin) {
+    textDemo.textColor = GREEN;
+    textDemo.text = "You Win!";
+  } else if (isGameOver) {
+    textDemo.textColor = RED;
+    textDemo.text = "Game Over";
+  } else {
+    textDemo.text = `stilt height: ${parseFloat(current_stilt_height).toFixed(
+      2
+    )} y baja a ${parseFloat(velocity_unity).toFixed(1)}/${velocity_time}s`;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -566,7 +614,7 @@ function gameRender() {
 
 ///////////////////////////////////////////////////////////////////////////////
 function gameRenderPost() {
-  drawTextScreen("Hello World!", mainCanvasSize.scale(0.5), 80);
+  // drawTextScreen("Hello World!", mainCanvasSize.scale(0.5), 80);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

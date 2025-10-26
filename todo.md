@@ -15,14 +15,10 @@
 - [ ] Mecánicas del juego
   - [x] Agregar perros en ciertas areas al azar
   - [x] Agregar ciertos Maderas en ciertas zonas
-  - [ ] Agregar mecánica de perder
+  - [x] Agregar mecánica de perder
   - [x] Agregar mecánica de bajar madera mas rápido si adquiere un perro y este desaparece del escenario pero aumenta el valor de velocidad.
   - [x] Agregar mecánica de bajar mas rápido si te acercas a la herramienta que lanza el suegro que esta desaparezca del escenario pero aumente el valor de tamaño de corte.
-  - [ ] Agregar mecanica de ganar
-    - [ ] Crear objeto de ganar
-    - [ ] Crear barda para alojar el jugador
-    - [ ] Crear balcon
-    - [ ] Crear colisiones de el 
+  - [x] Agregar mecanica de ganar
 - [ ] Agregar Sprites Oficiales
   - [ ] Crear Sprites para el Personaje
     - [ ] Sprite para Moverse

@@ -13,6 +13,8 @@ const ListsSpriteFramePlayer = {
 const STILT_HEIGHT_MIN = 0.01;
 const STILT_HEIGHT_MAX = 3.0;
 const STILT_SIZE_X = 1.5;
+const STILT_STAR_HEIGTH = 5;
+const STILT_GROW_UP = 2;
 const STILT_SHRINK_RATE = 5.0;
 const WOODTOOL_VALUE = 0.1;
 
@@ -351,10 +353,9 @@ class WoodToolSpawner extends EngineObject {
 
 class Stilt extends EngineObject {
   constructor(pos, player) {
-    super(pos, vec2(1, 2), null, 0, ORANGE);
+    super(pos, vec2(1, STILT_STAR_HEIGTH), null, 0, ORANGE);
     this.setCollision();
     this.player = player;
-    this.isMaximized = false;
     this.respawnPos = pos;
     this.sound = new Sound([
       ,
@@ -391,32 +392,22 @@ class Stilt extends EngineObject {
     }
   }
   grow() {
-    if (this.isMaximized) return;
-    // console.log(
-    //   `size: ${this.size.y} pos: ${this.pos.y} respawn: ${this.respawnPos.y}`
-    // );
-    // console.log(
-    //   `size: ${this.player.size.y} pos: ${this.player.pos.y} respawn: ${this.player.respawnPos.y}`
-    // );
-    this.size.y = this.size.y + 1;
-    this.pos.y = this.pos.y + 1;
-    this.player.pos.y += this.player.size.y + 1;
+    this.size.y = this.size.y + STILT_GROW_UP;
+    this.pos.y = this.pos.y + STILT_GROW_UP;
+    this.player.pos.y += this.player.size.y + STILT_GROW_UP;
     this.sound.play();
-
-    if (this.size >= STILT_HEIGHT_MAX) {
-      this.isMaximized = true;
-    }
   }
 }
 
 class Item extends EngineObject {
-  constructor(pos, index, itemSpawner) {
+  constructor(pos) {
     super(pos, vec2(0.5, 0.5), null, 0, GREEN);
     this.collide = false;
     this.mass = 0;
     this.player = null;
-    this.itemSpawner = itemSpawner;
-    this.index = index;
+    this.player = null;
+    this.spawner = null;
+    this.spawnPos = pos;
     this.sound = new Sound([
       ,
       ,
@@ -438,54 +429,82 @@ class Item extends EngineObject {
     ]);
   }
   update() {
-    if (this.player) {
+    if (this.player && this.spawner) {
       if (this.isOverlapping(this.player.pos, this.player.size)) {
         this.player.activateStilts();
-        this.itemSpawner.removeItem(this.index);
+        // Notificar al generador ANTES de destruirse
+        this.spawner.notifyDestroyed(this.spawnPos);
         this.sound.play();
         this.destroy();
       }
-      super.update();
     }
+    super.update();
   }
 }
 class ItemSpawner extends EngineObject {
   constructor(player) {
     super();
-    this.spawnRate = 5;
-    this.maxItems = 5;
-    this.itemSpawnPos = [
-      vec2(10, 4),
-      vec2(9, 8),
-      vec2(30, 8),
-      vec2(20, 4),
-      vec2(25, 10),
-      vec2(4, 8),
-      vec2(12, 8),
-      vec2(15, 6),
-    ];
     this.player = player;
-    this.timer = this.spawnRate;
-    this.currentItems = [];
+    this.spawnInterval = 5;
+    this.timer = this.spawnInterval;
+    this.maxItems = 8;
+    this.minX = 10;
+    this.maxX = 90;
+    this.minY = 6;
+    this.maxY = 25;
+    this.minDistance = 10;
+    this.activePositions = [];
   }
-
   update() {
-    if (time % 5 == 0) {
-      if (this.currentItems.length >= this.maxItems) {
-        return;
-      }
-      this.currentItems.push(this.spawnItem());
+    if (this.activePositions.length >= this.maxItems) {
+      this.timer = this.spawnInterval;
+      return;
+    }
+    this.timer -= time;
+    if (this.timer <= 0) {
+      this.spawnItem();
+      this.timer = this.spawnInterval;
     }
   }
-  removeItem(_index) {
-    this.currentItems.splice(_index, 1);
+  getRandomPosition() {
+    let attempts = 0;
+    const maxAttempts = 15;
+    const minDistanceSq = this.minDistance * this.minDistance;
+    while (attempts < maxAttempts) {
+      const randomX = rand(this.minX, this.maxX);
+      const randomY = rand(this.minY, this.maxY);
+      const newPos = vec2(randomX, randomY);
+      let isTooClose = false;
+      for (const activePos of this.activePositions) {
+        const dx = newPos.x - activePos.x;
+        const dy = newPos.y - activePos.y;
+        const distanceSq = dx * dx + dy * dy;
+        if (distanceSq < minDistanceSq) {
+          isTooClose = true;
+          break;
+        }
+      }
+      if (!isTooClose) {
+        return newPos;
+      }
+      attempts++;
+    }
+    return null;
   }
+
   spawnItem() {
-    const randomIndex = randInt(0, this.itemSpawnPos.length);
-    const pos = this.itemSpawnPos[randomIndex];
-    const newItem = new Item(pos, this.currentItems.length, this);
+    const pos = this.getRandomPosition();
+    if (pos === null) return;
+    const newItem = new Item(pos);
     newItem.player = this.player;
-    return newItem;
+    newItem.spawner = this;
+    this.activePositions.push(pos);
+  }
+  notifyDestroyed(destroyedPos) {
+    const index = this.activePositions.indexOf(destroyedPos);
+    if (index !== -1) {
+      this.activePositions.splice(index, 1);
+    }
   }
 }
 ////////////////////////////////////////////////////////////////////////
@@ -498,8 +517,8 @@ function gameInit() {
   new Boundary(vec2(0.5, wallCenterY), vec2(wallWidth, wallHeight));
   new Boundary(vec2(100 - 0.5, wallCenterY), vec2(wallWidth, wallHeight));
 
-  const player = new Player(vec2(5, 6));
-  const stilt = new Stilt(vec2(5, 4), player);
+  const player = new Player(vec2(5, STILT_STAR_HEIGTH + 6));
+  const stilt = new Stilt(vec2(5, STILT_STAR_HEIGTH + 2), player);
   new EnemySpawner(player);
   new WoodToolSpawner(player);
   player.stiltObject = stilt;

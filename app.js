@@ -167,8 +167,21 @@ class Enemy extends EngineObject {
   chaseUpdate() {
     const dirToPlayer = sign(this.player.pos.x - this.pos.x);
     this.velocity.x = dirToPlayer * this.chaseSpeed;
+    this.attack();
   }
-  attack() {}
+  attack() {
+    if (this.player.stiltObject) {
+      if (
+        this.isOverlapping(
+          this.player.stiltObject.pos,
+          this.player.stiltObject.size
+        )
+      ) {
+        velocity_time -= 1;
+        this.destroy();
+      }
+    }
+  }
 }
 
 class Stilt extends EngineObject {

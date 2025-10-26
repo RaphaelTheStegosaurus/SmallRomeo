@@ -14,12 +14,13 @@ const STILT_HEIGHT_MIN = 0.01;
 const STILT_HEIGHT_MAX = 3.0;
 const STILT_SIZE_X = 1.5;
 const STILT_SHRINK_RATE = 5.0;
+const WOODTOOL_VALUE = 0.1;
 
 ///////////
 //Mis variables globales
 let current_stilt_height;
 let velocity_time = 10;
-let velocity_unity = 0.1;
+let velocity_unity = 0.0;
 let uiRoot;
 let textDemo;
 let isVelocityTimeIsMin = false;
@@ -259,14 +260,95 @@ class EnemySpawner extends EngineObject {
     }
   }
 }
-class WoodTools extends EngineObject {
+class WoodTool extends EngineObject {
   constructor(pos) {
-    super(pos, vec2(1, 1), null, 0, RED);
-    this.setCollision();
-    this.index = index;
-    // this.sound =
+    super(pos, vec2(1, 1), null, 0, YELLOW);
+    this.collide = false;
+    this.mass = 0;
+    this.player = null;
+    this.spawner = null;
+    this.spawnX = pos.x;
+  }
+
+  update() {
+    this.pos.y += sin(time) * 0.005;
+    if (this.player && this.spawner) {
+      if (
+        this.isOverlapping(
+          this.player.stiltObject.pos,
+          this.player.stiltObject.size
+        )
+      ) {
+        if (velocity_unity < 1) {
+          velocity_unity += WOODTOOL_VALUE;
+        }
+        this.spawner.notifyDestroyed(this.spawnX);
+        this.destroy();
+      }
+    }
+    super.update();
   }
 }
+class WoodToolSpawner extends EngineObject {
+  constructor(player) {
+    super();
+    this.player = player;
+    this.spawnInterval = 15;
+    this.timer = this.spawnInterval;
+    this.maxTools = 2;
+    this.activePositions = [];
+    this.minX = 10;
+    this.maxX = 90;
+    this.minDistance = 8;
+  }
+  update() {
+    if (this.activePositions.length >= this.maxTools) {
+      this.timer = this.spawnInterval;
+      return;
+    }
+    this.timer -= time;
+    if (this.timer <= 0) {
+      this.spawnWoodTool();
+      this.timer = this.spawnInterval;
+    }
+  }
+  getRandomXPosition() {
+    let attempts = 0;
+    const maxAttempts = 10;
+    while (attempts < maxAttempts) {
+      const randomX = rand(this.minX, this.maxX);
+      let isTooClose = false;
+      for (const activeX of this.activePositions) {
+        if (Math.abs(activeX - randomX) < this.minDistance) {
+          isTooClose = true;
+          break;
+        }
+      }
+      if (!isTooClose) {
+        return randomX;
+      }
+      attempts++;
+    }
+    return null;
+  }
+  spawnWoodTool() {
+    const xPos = this.getRandomXPosition();
+    if (xPos === null) return;
+    const pos = vec2(xPos, 3);
+    const newTool = new WoodTool(pos);
+    newTool.player = this.player;
+    newTool.spawner = this;
+    newTool.spawnX = xPos;
+    this.activePositions.push(xPos);
+  }
+  notifyDestroyed(xPos) {
+    const index = this.activePositions.indexOf(xPos);
+    if (index !== -1) {
+      this.activePositions.splice(index, 1);
+    }
+  }
+}
+
 class Stilt extends EngineObject {
   constructor(pos, player) {
     super(pos, vec2(1, 2), null, 0, ORANGE);
@@ -419,6 +501,7 @@ function gameInit() {
   const player = new Player(vec2(5, 6));
   const stilt = new Stilt(vec2(5, 4), player);
   new EnemySpawner(player);
+  new WoodToolSpawner(player);
   player.stiltObject = stilt;
   new ItemSpawner(player);
   canvasClearColor = hsl(0.6, 0.3, 0.5);
@@ -438,6 +521,7 @@ function gameInit() {
   textDemo = new UIText(vec2(600, 100), vec2(600, 100));
   textDemo.textColor = WHITE;
   textDemo.textLineWidth = 8;
+
   // console.log(textDemo);
   uiRoot.addChild(textDemo);
   // const uiMenu = new UIObject(mainCanvasSize.scale(0.5), vec2(600, 450));
@@ -445,7 +529,9 @@ function gameInit() {
 
 ///////////////////////////////////////////////////////////////////////////////
 function gameUpdate() {
-  textDemo.text = `stilt height: ${current_stilt_height}`;
+  textDemo.text = `stilt height: ${parseFloat(current_stilt_height).toFixed(
+    2
+  )} y baja a ${parseFloat(velocity_unity).toFixed(1)}/${velocity_time}s`;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

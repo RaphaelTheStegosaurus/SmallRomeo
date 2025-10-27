@@ -235,10 +235,6 @@ class Enemy extends EngineObject {
       if (velocity_time > 1) {
         velocity_time -= 1;
       }
-      if (velocity_time == 1 && !isVelocityTimeIsMin) {
-        isVelocityTimeIsMin = true;
-        console.log("Ya devoran a cada segundo ");
-      }
       this.destroy();
     }
   }
@@ -250,6 +246,7 @@ class EnemySpawner extends EngineObject {
     this.spawnInterval = 10;
     this.timer = this.spawnInterval;
     this.activePositions = [];
+    this.activeEnemies = [];
     this.maxEnemies = 4;
     this.minX = 5;
     this.maxX = 95;
@@ -298,13 +295,27 @@ class EnemySpawner extends EngineObject {
     newEnemy.spawner = this;
     newEnemy.spawnX = xPos;
     this.activePositions.push(xPos);
+    this.activeEnemies.push(newEnemy);
   }
   notifyDestroyed(xPos) {
     const index = this.activePositions.indexOf(xPos);
     if (index !== -1) {
       this.activePositions.splice(index, 1);
+      this.activeEnemies.splice(index, 1);
     }
     this.timer = this.spawnInterval;
+  }
+  destroyAllSpawned() {
+    for (const enemy of this.activeEnemies) {
+      if (enemy) {
+        enemy.destroy();
+      }
+    }
+    this.activeEnemies = [];
+  }
+  destroy() {
+    this.destroyAllSpawned();
+    super.destroy();
   }
 }
 class CloudOfDog extends EngineObject {
@@ -394,6 +405,7 @@ class WoodToolSpawner extends EngineObject {
     this.timer = 0;
     this.maxTools = 3;
     this.activePositions = [];
+    this.activeTools = [];
     this.minX = 10;
     this.maxX = 90;
     this.minDistance = 8;
@@ -440,13 +452,25 @@ class WoodToolSpawner extends EngineObject {
     newTool.spawner = this;
     newTool.spawnX = xPos;
     this.activePositions.push(xPos);
+    this.activeTools.push(newTool);
   }
   notifyDestroyed(xPos) {
     const index = this.activePositions.indexOf(xPos);
     if (index !== -1) {
       this.activePositions.splice(index, 1);
+      this.activeTools.splice(index, 1);
     }
     this.timer = this.spawnInterval;
+  }
+  destroyAllSpawned() {
+    for (const tool of this.activeTools) {
+      if (tool) tool.destroy();
+    }
+    this.activeTools = [];
+  }
+  destroy() {
+    this.destroyAllSpawned();
+    super.destroy();
   }
 }
 class Stilt extends EngineObject {
@@ -559,6 +583,7 @@ class ItemSpawner extends EngineObject {
     this.maxY = 30;
     this.minDistance = 8;
     this.activePositions = [];
+    this.activeItems = [];
   }
   update() {
     if (gameState !== GAME_STATE.PLAYING) {
@@ -607,13 +632,25 @@ class ItemSpawner extends EngineObject {
     newItem.player = this.player;
     newItem.spawner = this;
     this.activePositions.push(pos);
+    this.activeItems.push(newItem);
   }
   notifyDestroyed(destroyedPos) {
     const index = this.activePositions.indexOf(destroyedPos);
     if (index !== -1) {
       this.activePositions.splice(index, 1);
+      this.activeItems.splice(index, 1);
     }
     this.timer = this.spawnInterval;
+  }
+  destroyAllSpawned() {
+    for (const item of this.activeItems) {
+      if (item) item.destroy();
+    }
+    this.activeItems = [];
+  }
+  destroy() {
+    this.destroyAllSpawned();
+    super.destroy();
   }
 }
 class Goal extends EngineObject {

@@ -42,16 +42,26 @@ let isStar = true;
 let menuInstance = null;
 let gameObjects = [];
 function startGame() {
+  destroyAndResetGame();
+  createGameObjects();
+  gameState = GAME_STATE.PLAYING;
+}
+function endGame() {
+  gameState = GAME_STATE.GAME_OVER;
+}
+function destroyAndResetGame() {
+  for (const obj of gameObjects) {
+    if (obj) {
+      obj.destroy();
+    }
+  }
+  gameObjects = []; // Limpia el array de seguimiento
   velocity_time = 10;
   velocity_unity = 0.0;
   isVelocityTimeIsMin = false;
   isVelocityUnityIsMax = false;
   isGameOver = false;
   isYouWin = false;
-  gameState = GAME_STATE.PLAYING;
-}
-function endGame() {
-  gameState = GAME_STATE.GAME_OVER;
 }
 ///////////
 
@@ -74,6 +84,9 @@ class Player extends EngineObject {
     this.JumpSound = new Sound([, , 1e3, , , 0.5, , , , , 99, 0.01, 0.03]);
   }
   update() {
+    if (gameState !== GAME_STATE.PLAYING) {
+      return;
+    }
     const moveInput = keyDirection();
     this.velocity.x += moveInput.x * (this.groundObject ? 0.1 : 0.01);
     if (moveInput.x < 0) this.mirror = true;
@@ -242,6 +255,9 @@ class EnemySpawner extends EngineObject {
     this.maxX = 95;
   }
   update() {
+    if (gameState !== GAME_STATE.PLAYING) {
+      return;
+    }
     if (this.activePositions.length >= this.maxEnemies) {
       this.timer = this.spawnInterval;
       return;
@@ -383,6 +399,9 @@ class WoodToolSpawner extends EngineObject {
     this.minDistance = 8;
   }
   update() {
+    if (gameState !== GAME_STATE.PLAYING) {
+      return;
+    }
     if (this.activePositions.length >= this.maxTools) {
       this.timer = this.spawnInterval;
       return;
@@ -536,6 +555,9 @@ class ItemSpawner extends EngineObject {
     this.activePositions = [];
   }
   update() {
+    if (gameState !== GAME_STATE.PLAYING) {
+      return;
+    }
     if (this.activePositions.length >= this.maxItems) {
       this.timer = this.spawnInterval;
       return;
@@ -746,10 +768,10 @@ class Menu extends EngineObject {
       "back to Menu"
     );
     toMenuButton.onClick = () => {
-      // for (const obj of Engine.objects) {
-      //   obj.destroy();
-      // }
-      // gameInit();
+      for (const obj of gameObjects) {
+        if (obj) obj.destroy();
+      }
+      createGameObjects();
       gameState = GAME_STATE.START_MENU;
     };
     container.addChild(gameOverMenuText);
@@ -786,7 +808,7 @@ function createGameObjects() {
 
   canvasClearColor = hsl(0.6, 0.3, 0.5);
   bg = tile(vec2(0, 0), canvasMaxSize, 2);
-  gameObjects.push(new StiltBar(vec2(200, 100), vec2(300, 20)));
+  // gameObjects.push(new StiltBar(vec2(200, 100), vec2(300, 20)));
 }
 ////////////////////////////////////////////////////////////////////////
 function gameInit() {

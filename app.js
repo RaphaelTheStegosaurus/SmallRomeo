@@ -285,6 +285,37 @@ class CloudOfDog extends EngineObject {
     this.pos.x = this.player.pos.x;
   }
 }
+class CloudParticles extends ParticleEmitter {
+  constructor(posX) {
+    super(
+      vec2(posX, 1),
+      0,
+      3,
+      0,
+      200,
+      PI, //emitConeAngle
+      0,
+      hsl(0, 0, 0, 0.5),
+      hsl(0, 0, 1, 0.5),
+      hsl(0, 0, 0, 0),
+      hsl(0, 0, 1, 0),
+      1, //particletime
+      1, //sizestart
+      2, //sizeend
+      0.3,
+      0.01,
+      0.85, //damping
+      1,
+      -0.075, //gravity
+      PI,
+      0.3,
+      0.5,
+      0,
+      0,
+      1
+    );
+  }
+}
 class WoodTool extends EngineObject {
   constructor(pos) {
     super(pos, vec2(1, 1), null, 0, YELLOW);
@@ -384,6 +415,7 @@ class Stilt extends EngineObject {
     this.setCollision();
     this.player = player;
     this.respawnPos = pos;
+    this.Cloud = new CloudParticles(this.pos.x);
     this.sound = new Sound([
       ,
       ,
@@ -405,6 +437,7 @@ class Stilt extends EngineObject {
   }
   update() {
     this.pos.x = this.player.pos.x;
+    this.Cloud.pos.x = this.pos.x;
     current_stilt_height = this.size.y;
     this.reduceY();
   }
@@ -629,7 +662,6 @@ function gameInit() {
   new Boundary(vec2(100 - 0.5, wallCenterY), vec2(wallWidth, wallHeight));
   const player = new Player(vec2(5, STILT_STAR_HEIGTH + 6));
   const stilt = new Stilt(vec2(5, STILT_STAR_HEIGTH + 2), player);
-  new CloudOfDog(player);
   new Goal(vec2(97, wallHeight - 10), player);
   new EnemySpawner(player);
   new WoodToolSpawner(player);
@@ -650,7 +682,7 @@ function gameInit() {
   textDemo.textLineWidth = 8;
   uiRoot.addChild(textDemo);
   let bar = new StiltBar(vec2(200, 100), vec2(300, 20));
-  console.log(bar);
+  // console.log(ParticleEmitter);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -481,6 +481,12 @@ class Stilt extends EngineObject {
     current_stilt_height = this.size.y;
     this.reduceY();
   }
+  destroy() {
+    if (this.Cloud) {
+      this.Cloud.destroy();
+    }
+    super.destroy();
+  }
   reduceY() {
     if (this.size.y > 0.2) {
       const secondDelay = time % velocity_time;
@@ -768,10 +774,7 @@ class Menu extends EngineObject {
       "back to Menu"
     );
     toMenuButton.onClick = () => {
-      for (const obj of gameObjects) {
-        if (obj) obj.destroy();
-      }
-      createGameObjects();
+      destroyAndResetGame();
       gameState = GAME_STATE.START_MENU;
     };
     container.addChild(gameOverMenuText);

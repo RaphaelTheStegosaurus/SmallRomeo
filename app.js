@@ -186,6 +186,9 @@ class Enemy extends EngineObject {
   }
 
   update() {
+    if (gameState !== GAME_STATE.PLAYING) {
+      return;
+    }
     const dx = this.player.pos.x - this.pos.x;
     const dy = this.player.pos.y - this.pos.y;
     const distSq = dx * dx + dy * dy;
@@ -375,6 +378,9 @@ class WoodTool extends EngineObject {
   }
 
   update() {
+    if (gameState !== GAME_STATE.PLAYING) {
+      return;
+    }
     this.pos.y += sin(time) * 0.005;
     if (this.player && this.spawner) {
       if (
@@ -500,6 +506,9 @@ class Stilt extends EngineObject {
     ]);
   }
   update() {
+    if (gameState !== GAME_STATE.PLAYING) {
+      return;
+    }
     this.pos.x = this.player.pos.x;
     this.Cloud.pos.x = this.pos.x;
     current_stilt_height = this.size.y;
@@ -559,6 +568,9 @@ class Item extends EngineObject {
     ]);
   }
   update() {
+    if (gameState !== GAME_STATE.PLAYING) {
+      return;
+    }
     if (this.player && this.spawner) {
       if (this.isOverlapping(this.player.pos, this.player.size)) {
         this.player.activateStilts();

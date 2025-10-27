@@ -39,17 +39,15 @@ let isGameOver = false;
 let isYouWin = false;
 let isPause = false;
 let isStar = true;
+let menuInstance = null;
+let gameObjects = [];
 function startGame() {
-  // for (const obj of Engine.objects) {
-  //   obj.destroy();
-  // }
   velocity_time = 10;
   velocity_unity = 0.0;
   isVelocityTimeIsMin = false;
   isVelocityUnityIsMax = false;
   isGameOver = false;
   isYouWin = false;
-  // gameInit();
   gameState = GAME_STATE.PLAYING;
 }
 function endGame() {
@@ -691,12 +689,6 @@ class Menu extends EngineObject {
       vec2(cameraWidth * 0.625, cameraHeight * 0.55),
       vec2(cameraWidth, cameraHeight)
     );
-    // this.startContainer.visible = true;
-    // this.pausedContainer.visible = true;
-    // this.gameOverContainer.visible = true;
-    // this.addChild(this.startContainer);
-    // this.addChild(this.pausedContainer);
-    // this.addChild(this.gameOverContainer);
   }
   update() {
     this.startContainer.visible = gameState == GAME_STATE.START_MENU;
@@ -766,6 +758,36 @@ class Menu extends EngineObject {
     return container;
   }
 }
+function createGameObjects() {
+  gameObjects = [];
+  gameObjects.push(new Level());
+  const wallHeight = 40;
+  const wallCenterY = wallHeight / 2;
+  const wallWidth = 1;
+  gameObjects.push(
+    new Boundary(vec2(0.5, wallCenterY), vec2(wallWidth, wallHeight))
+  );
+  gameObjects.push(
+    new Boundary(vec2(100 - 0.5, wallCenterY), vec2(wallWidth, wallHeight))
+  );
+
+  const player = new Player(vec2(5, STILT_STAR_HEIGTH + 6));
+  gameObjects.push(player);
+
+  const stilt = new Stilt(vec2(5, STILT_STAR_HEIGTH + 2), player);
+  gameObjects.push(stilt);
+
+  gameObjects.push(new Goal(vec2(97, wallHeight - 10), player));
+  gameObjects.push(new EnemySpawner(player));
+  gameObjects.push(new WoodToolSpawner(player));
+
+  player.stiltObject = stilt;
+  gameObjects.push(new ItemSpawner(player));
+
+  canvasClearColor = hsl(0.6, 0.3, 0.5);
+  bg = tile(vec2(0, 0), canvasMaxSize, 2);
+  gameObjects.push(new StiltBar(vec2(200, 100), vec2(300, 20)));
+}
 ////////////////////////////////////////////////////////////////////////
 function gameInit() {
   new UISystemPlugin();
@@ -773,36 +795,10 @@ function gameInit() {
   uiSystem.defaultCornerRadius = 20;
   uiSystem.defaultShadowColor = CYAN;
   gravity.y = -0.05;
-  new Level();
-  const wallHeight = 40;
-  const wallCenterY = wallHeight / 2;
-  const wallWidth = 1;
-  new Boundary(vec2(0.5, wallCenterY), vec2(wallWidth, wallHeight));
-  new Boundary(vec2(100 - 0.5, wallCenterY), vec2(wallWidth, wallHeight));
-  const player = new Player(vec2(5, STILT_STAR_HEIGTH + 6));
-  const stilt = new Stilt(vec2(5, STILT_STAR_HEIGTH + 2), player);
-  new Goal(vec2(97, wallHeight - 10), player);
-  new EnemySpawner(player);
-  new WoodToolSpawner(player);
-  player.stiltObject = stilt;
-  new ItemSpawner(player);
+  menuInstance = new Menu();
+  createGameObjects();
+  gameState = GAME_STATE.START_MENU;
   canvasClearColor = hsl(0.6, 0.3, 0.5);
-  // const bg = new TileLayer(
-  //   vec2(0, 0),
-  //   canvasMaxSize,
-  //   new TileInfo(vec2(0, 0), vec2(900, 700), 2)
-  // );
-  // new StiltBar(vec2(0, 0), vec2(1.5, 10));
-  bg = tile(vec2(0, 0), canvasMaxSize, 2);
-  //ui
-  // uiRoot = new UIObject(vec2(0, 0), vec2(1, 1));
-  // textDemo = new UIText(vec2(600, 300), vec2(600, 100));
-  // textDemo.textColor = WHITE;
-  // textDemo.textLineWidth = 8;
-  // uiRoot.addChild(textDemo);
-  let bar = new StiltBar(vec2(200, 100), vec2(300, 20));
-  let menu = new Menu();
-  console.log(menu);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

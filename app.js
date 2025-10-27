@@ -25,6 +25,7 @@ let velocity_time = 10;
 let velocity_unity = 0.0;
 let uiRoot;
 let textDemo;
+
 let isVelocityTimeIsMin = false;
 let isVelocityUnityIsMax = false;
 let isGameOver = false;
@@ -267,6 +268,21 @@ class EnemySpawner extends EngineObject {
       this.activePositions.splice(index, 1);
     }
     this.timer = this.spawnInterval;
+  }
+}
+class CloudOfDog extends EngineObject {
+  constructor(player) {
+    super();
+    this.size = vec2(5, 2);
+    this.color = GRAY;
+    this.collide = false;
+    this.mass = 0;
+    this.pos.y = 1;
+    this.player = player;
+    console.log(this);
+  }
+  update() {
+    this.pos.x = this.player.pos.x;
   }
 }
 class WoodTool extends EngineObject {
@@ -549,9 +565,61 @@ class Goal extends EngineObject {
     return false;
   }
 }
-
+class StiltBar extends UIScrollbar {
+  constructor(pos, size) {
+    super(pos, size);
+  }
+  update() {
+    const stiltValue = parseFloat(current_stilt_height / 10).toFixed(2);
+    this.getValue(stiltValue);
+    super.update();
+  }
+  getValue(value) {
+    if (value < 0.2) {
+      this.color = RED;
+      this.value = 0.01;
+      return;
+    }
+    if (value < 0.4) {
+      this.color = ORANGE;
+      this.value = 0.25;
+      return;
+    }
+    if (value < 0.5) {
+      this.color = YELLOW;
+      this.value = 0.35;
+      return;
+    }
+    if (value < 0.7) {
+      this.color = CYAN;
+      this.value = 0.47;
+      return;
+    }
+    if (value < 0.9) {
+      this.color = CYAN;
+      this.value = 0.5;
+      return;
+    }
+    if (value < 1.5) {
+      this.color = BLUE;
+      this.value = 0.75;
+      return;
+    }
+    if (value < 2.0) {
+      this.color = BLUE;
+      this.value = 0.85;
+      return;
+    }
+    if (value >= 2.0) {
+      this.color = GREEN;
+      this.value = 0.99;
+      return;
+    }
+  }
+}
 ////////////////////////////////////////////////////////////////////////
 function gameInit() {
+  new UISystemPlugin();
   gravity.y = -0.05;
   new Level();
   const wallHeight = 40;
@@ -561,6 +629,7 @@ function gameInit() {
   new Boundary(vec2(100 - 0.5, wallCenterY), vec2(wallWidth, wallHeight));
   const player = new Player(vec2(5, STILT_STAR_HEIGTH + 6));
   const stilt = new Stilt(vec2(5, STILT_STAR_HEIGTH + 2), player);
+  new CloudOfDog(player);
   new Goal(vec2(97, wallHeight - 10), player);
   new EnemySpawner(player);
   new WoodToolSpawner(player);
@@ -572,21 +641,16 @@ function gameInit() {
   //   canvasMaxSize,
   //   new TileInfo(vec2(0, 0), vec2(900, 700), 2)
   // );
+  // new StiltBar(vec2(0, 0), vec2(1.5, 10));
   bg = tile(vec2(0, 0), canvasMaxSize, 2);
-  // console.log(tile(vec2(0, 0), canvasMaxSize, 2));
-  // console.log(mainCanvasSize.scale(0.5));
-
   //ui
-  new UISystemPlugin();
   uiRoot = new UIObject(vec2(0, 0), vec2(1, 1));
-
-  textDemo = new UIText(vec2(600, 100), vec2(600, 100));
+  textDemo = new UIText(vec2(600, 300), vec2(600, 100));
   textDemo.textColor = WHITE;
   textDemo.textLineWidth = 8;
-
-  // console.log(textDemo);
   uiRoot.addChild(textDemo);
-  // const uiMenu = new UIObject(mainCanvasSize.scale(0.5), vec2(600, 450));
+  let bar = new StiltBar(vec2(200, 100), vec2(300, 20));
+  console.log(bar);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -598,9 +662,9 @@ function gameUpdate() {
     textDemo.textColor = RED;
     textDemo.text = "Game Over";
   } else {
-    textDemo.text = `stilt height: ${parseFloat(current_stilt_height).toFixed(
-      2
-    )} y baja a ${parseFloat(velocity_unity).toFixed(1)}/${velocity_time}s`;
+    // textDemo.text = `stilt height: ${parseFloat(current_stilt_height).toFixed(
+    //   2
+    // )} y baja a ${parseFloat(velocity_unity).toFixed(1)}/${velocity_time}s`;
   }
 }
 

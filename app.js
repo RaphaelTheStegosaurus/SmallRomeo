@@ -55,7 +55,7 @@ function destroyAndResetGame() {
       obj.destroy();
     }
   }
-  gameObjects = []; // Limpia el array de seguimiento
+  gameObjects = [];
   velocity_time = 10;
   velocity_unity = 0.0;
   isVelocityTimeIsMin = false;
@@ -701,6 +701,10 @@ class StiltBar extends UIScrollbar {
     super(pos, size);
   }
   update() {
+    if (gameState !== GAME_STATE.PLAYING) {
+      this.visible = false;
+      return;
+    }
     const stiltValue = parseFloat(current_stilt_height / 10).toFixed(2);
     this.getValue(stiltValue);
     super.update();
@@ -815,6 +819,7 @@ class Menu extends EngineObject {
       "Play Again ?"
     );
     restartButton.onClick = () => {
+      container.visible = false;
       startGame();
     };
     const toMenuButton = new UIButton(
@@ -823,6 +828,7 @@ class Menu extends EngineObject {
       "back to Menu"
     );
     toMenuButton.onClick = () => {
+      container.visible = false;
       destroyAndResetGame();
       gameState = GAME_STATE.START_MENU;
     };
@@ -860,7 +866,7 @@ function createGameObjects() {
 
   canvasClearColor = hsl(0.6, 0.3, 0.5);
   bg = tile(vec2(0, 0), canvasMaxSize, 2);
-  // gameObjects.push(new StiltBar(vec2(200, 100), vec2(300, 20)));
+  gameObjects.push(new StiltBar(vec2(200, 100), vec2(300, 20)));
 }
 ////////////////////////////////////////////////////////////////////////
 function gameInit() {

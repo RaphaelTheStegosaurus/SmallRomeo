@@ -17,7 +17,14 @@ const STILT_STAR_HEIGTH = 5;
 const STILT_GROW_UP = 2;
 const STILT_SHRINK_RATE = 5.0;
 const WOODTOOL_VALUE = 0.1;
-
+const GAME_STATE = {
+  START_MENU: 0,
+  PLAYING: 1,
+  PAUSED: 2,
+  GAME_OVER: 3,
+  ANIMATION_INTRO: 4,
+};
+let gameState = GAME_STATE.START_MENU;
 ///////////
 //Mis variables globales
 let current_stilt_height;
@@ -32,6 +39,22 @@ let isGameOver = false;
 let isYouWin = false;
 let isPause = false;
 let isStar = true;
+function startGame() {
+  // for (const obj of Engine.objects) {
+  //   obj.destroy();
+  // }
+  velocity_time = 10;
+  velocity_unity = 0.0;
+  isVelocityTimeIsMin = false;
+  isVelocityUnityIsMax = false;
+  isGameOver = false;
+  isYouWin = false;
+  // gameInit();
+  gameState = GAME_STATE.PLAYING;
+}
+function endGame() {
+  gameState = GAME_STATE.GAME_OVER;
+}
 ///////////
 
 class Player extends EngineObject {
@@ -448,7 +471,7 @@ class Stilt extends EngineObject {
         this.size.y = this.size.y - velocity_unity;
       }
     } else {
-      isGameOver = true;
+      endGame();
       this.size.y = 0.1;
     }
   }
@@ -650,9 +673,105 @@ class StiltBar extends UIScrollbar {
     }
   }
 }
+class Menu extends EngineObject {
+  constructor() {
+    const canvas = canvasMaxSize.scale(0.5);
+    const cameraWidth = parseInt(canvas.x);
+    const cameraHeight = parseInt(canvas.y);
+    super();
+    this.startContainer = this.loadStartMenu(
+      vec2(cameraWidth * 0.625, cameraHeight * 0.55),
+      vec2(cameraWidth, cameraHeight)
+    );
+    this.pausedContainer = this.loadPausedMenu(
+      vec2(cameraWidth * 0.625, cameraHeight * 0.55),
+      vec2(cameraWidth, cameraHeight)
+    );
+    this.gameOverContainer = this.loadGameOverMenu(
+      vec2(cameraWidth * 0.625, cameraHeight * 0.55),
+      vec2(cameraWidth, cameraHeight)
+    );
+    // this.startContainer.visible = true;
+    // this.pausedContainer.visible = true;
+    // this.gameOverContainer.visible = true;
+    // this.addChild(this.startContainer);
+    // this.addChild(this.pausedContainer);
+    // this.addChild(this.gameOverContainer);
+  }
+  update() {
+    this.startContainer.visible = gameState == GAME_STATE.START_MENU;
+    this.pausedContainer.visible = gameState == GAME_STATE.PAUSED;
+    this.gameOverContainer.visible = gameState == GAME_STATE.GAME_OVER;
+    super.update();
+  }
+  loadStartMenu(pos, size) {
+    const container = new UIObject(pos, size);
+    container.color = new Color(1, 1, 1, 0.9);
+    const startMenuText = new UIText(
+      vec2(0, -150),
+      vec2(400, 80),
+      "Small Romeo"
+    );
+    const startButton = new UIButton(vec2(0, 0), vec2(150, 50), "start");
+    startButton.onClick = () => {
+      startGame();
+    };
+    container.addChild(startMenuText);
+    container.addChild(startButton);
+    return container;
+  }
+  loadPausedMenu(pos, size) {
+    const container = new UIObject(pos, size);
+    container.color = new Color(0, 0, 0, 0.5);
+    const pausedMenuText = new UIText(vec2(0, -150), vec2(400, 80), "Paused");
+    const continueButton = new UIButton(vec2(0, 0), vec2(200, 50), "Continue");
+    continueButton.onClick = () => {
+      gameState = GAME_STATE.PLAYING;
+    };
+    container.addChild(pausedMenuText);
+    container.addChild(continueButton);
+    return container;
+  }
+  loadGameOverMenu(pos, size) {
+    const container = new UIObject(pos, size);
+    container.color = new Color(0.5, 0, 0, 0.8);
+    const gameOverMenuText = new UIText(
+      vec2(0, -150),
+      vec2(400, 80),
+      "Game Over"
+    );
+    const restartButton = new UIButton(
+      vec2(0, -50),
+      vec2(250, 50),
+      "Play Again ?"
+    );
+    restartButton.onClick = () => {
+      startGame();
+    };
+    const toMenuButton = new UIButton(
+      vec2(0, 50),
+      vec2(250, 50),
+      "back to Menu"
+    );
+    toMenuButton.onClick = () => {
+      // for (const obj of Engine.objects) {
+      //   obj.destroy();
+      // }
+      // gameInit();
+      gameState = GAME_STATE.START_MENU;
+    };
+    container.addChild(gameOverMenuText);
+    container.addChild(restartButton);
+    container.addChild(toMenuButton);
+    return container;
+  }
+}
 ////////////////////////////////////////////////////////////////////////
 function gameInit() {
   new UISystemPlugin();
+  uiSystem.defaultSoundClick = new Sound([0.5, 0, 440]);
+  uiSystem.defaultCornerRadius = 20;
+  uiSystem.defaultShadowColor = CYAN;
   gravity.y = -0.05;
   new Level();
   const wallHeight = 40;
@@ -676,23 +795,27 @@ function gameInit() {
   // new StiltBar(vec2(0, 0), vec2(1.5, 10));
   bg = tile(vec2(0, 0), canvasMaxSize, 2);
   //ui
-  uiRoot = new UIObject(vec2(0, 0), vec2(1, 1));
-  textDemo = new UIText(vec2(600, 300), vec2(600, 100));
-  textDemo.textColor = WHITE;
-  textDemo.textLineWidth = 8;
-  uiRoot.addChild(textDemo);
+  // uiRoot = new UIObject(vec2(0, 0), vec2(1, 1));
+  // textDemo = new UIText(vec2(600, 300), vec2(600, 100));
+  // textDemo.textColor = WHITE;
+  // textDemo.textLineWidth = 8;
+  // uiRoot.addChild(textDemo);
   let bar = new StiltBar(vec2(200, 100), vec2(300, 20));
-  // console.log(ParticleEmitter);
+  let menu = new Menu();
+  console.log(menu);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 function gameUpdate() {
+  if (gameState === GAME_STATE.PLAYING) {
+  }
+
   if (isYouWin) {
-    textDemo.textColor = GREEN;
-    textDemo.text = "You Win!";
+    // textDemo.textColor = GREEN;
+    // textDemo.text = "You Win!";
   } else if (isGameOver) {
-    textDemo.textColor = RED;
-    textDemo.text = "Game Over";
+    // textDemo.textColor = RED;
+    // textDemo.text = "Game Over";
   } else {
     // textDemo.text = `stilt height: ${parseFloat(current_stilt_height).toFixed(
     //   2
@@ -705,7 +828,7 @@ function gameUpdatePost() {}
 
 ///////////////////////////////////////////////////////////////////////////////
 function gameRender() {
-  drawTile(vec2(30, 12), vec2(80, 40), bg);
+  drawTile(vec2(40, 12), vec2(80, 40), bg);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

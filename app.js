@@ -48,10 +48,16 @@ function startGame() {
   gameState = GAME_STATE.PLAYING;
 }
 function endGame() {
-  gameState = GAME_STATE.GAME_OVER;
+  if (gameState === GAME_STATE.PLAYING) {
+    // Evita llamadas repetidas/tardías
+    gameState = GAME_STATE.GAME_OVER;
+  }
 }
 function winGame() {
-  gameState = GAME_STATE.YOU_WIN;
+  if (gameState === GAME_STATE.PLAYING) {
+    // Evita llamadas repetidas/tardías
+    gameState = GAME_STATE.YOU_WIN;
+  }
 }
 function destroyAndResetGame() {
   for (const obj of gameObjects) {
@@ -508,6 +514,7 @@ class Stilt extends EngineObject {
       ,
       0.1,
     ]);
+    this.shrinkTimer = velocity_time;
   }
   update() {
     if (gameState !== GAME_STATE.PLAYING) {
@@ -525,13 +532,16 @@ class Stilt extends EngineObject {
     super.destroy();
   }
   reduceY() {
+    this.shrinkTimer -= timeDelta;
     if (this.size.y > 0.2) {
-      const secondDelay = time % velocity_time;
-      if (secondDelay == 0) {
+      if (this.shrinkTimer <= 0) {
         this.size.y = this.size.y - velocity_unity;
+        this.shrinkTimer = velocity_time;
       }
     } else {
-      endGame();
+      if (gameState === GAME_STATE.PLAYING) {
+        endGame();
+      }
       this.size.y = 0.1;
     }
   }
@@ -784,40 +794,10 @@ class Menu extends EngineObject {
     this.youWinContainer.visible = false;
   }
   update() {
-    if (gameState === GAME_STATE.PLAYING) {
-      this.startContainer.visible = false;
-      this.pausedContainer.visible = false;
-      this.gameOverContainer.visible = false;
-      this.youWinContainer.visible = false;
-    }
-    if (gameState == GAME_STATE.START_MENU) {
-      this.startContainer.visible = true;
-      this.pausedContainer.visible = false;
-      this.gameOverContainer.visible = false;
-      this.youWinContainer.visible = false;
-    }
-    if (gameState == GAME_STATE.PAUSED) {
-      this.startContainer.visible = false;
-      this.pausedContainer.visible = true;
-      this.gameOverContainer.visible = false;
-      this.youWinContainer.visible = false;
-    }
-    if (gameState == GAME_STATE.GAME_OVER) {
-      this.startContainer.visible = false;
-      this.pausedContainer.visible = false;
-      this.gameOverContainer.visible = true;
-      this.youWinContainer.visible = false;
-    }
-    if (gameState == GAME_STATE.YOU_WIN) {
-      this.startContainer.visible = false;
-      this.pausedContainer.visible = false;
-      this.gameOverContainer.visible = false;
-      this.youWinContainer.visible = true;
-    }
-    // this.startContainer.visible = gameState == GAME_STATE.START_MENU;
-    // this.pausedContainer.visible = gameState == GAME_STATE.PAUSED;
-    // this.gameOverContainer.visible = gameState == GAME_STATE.GAME_OVER;
-    // this.youWinContainer.visible = gameState == GAME_STATE.YOU_WIN;
+    this.startContainer.visible = gameState == GAME_STATE.START_MENU;
+    this.pausedContainer.visible = gameState == GAME_STATE.PAUSED;
+    this.gameOverContainer.visible = gameState == GAME_STATE.GAME_OVER;
+    this.youWinContainer.visible = gameState == GAME_STATE.YOU_WIN;
     super.update();
   }
   loadStartMenu(pos, size) {
@@ -863,7 +843,9 @@ class Menu extends EngineObject {
     );
     restartButton.onClick = () => {
       container.visible = false;
-      startGame();
+      setTimeout(() => {
+        startGame();
+      }, 1);
     };
     const toMenuButton = new UIButton(
       vec2(0, 50),
@@ -873,6 +855,7 @@ class Menu extends EngineObject {
     toMenuButton.onClick = () => {
       container.visible = false;
       destroyAndResetGame();
+      createGameObjects();
       gameState = GAME_STATE.START_MENU;
     };
     container.addChild(gameOverMenuText);
@@ -896,7 +879,9 @@ class Menu extends EngineObject {
     );
     restartButton.onClick = () => {
       container.visible = false;
-      startGame();
+      setTimeout(() => {
+        startGame();
+      }, 1);
     };
     const toMenuButton = new UIButton(
       vec2(0, 50),
@@ -906,6 +891,7 @@ class Menu extends EngineObject {
     toMenuButton.onClick = () => {
       container.visible = false;
       destroyAndResetGame();
+      createGameObjects();
       gameState = GAME_STATE.START_MENU;
     };
 

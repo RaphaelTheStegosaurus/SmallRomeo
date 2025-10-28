@@ -10,6 +10,15 @@ const ListsSpriteFramePlayer = {
     width: 22,
   },
 };
+const ListsSpriteFrameEnemy = {
+  walk: {
+    frames: 3,
+    speed: 6,
+    width: 301,
+    height: 275,
+    tileIndex: 3,
+  },
+};
 const STILT_HEIGHT_MIN = 0.01;
 const STILT_HEIGHT_MAX = 3.0;
 const STILT_SIZE_X = 1.5;
@@ -186,7 +195,7 @@ class Boundary extends EngineObject {
 }
 class Enemy extends EngineObject {
   constructor(pos) {
-    super(pos, vec2(1.5, 1.5), null, 0, BLUE);
+    super(pos, vec2(1.5, 1.5));
     this.setCollision();
     this.speed = 0.05;
     this.chaseSpeed = 0.08;
@@ -199,6 +208,13 @@ class Enemy extends EngineObject {
     this.rightBound = pos.x + this.range / 2;
     this.spawner = null;
     this.spawnX = pos.x;
+
+    const animData = ListsSpriteFrameEnemy.walk;
+    const tileInfo = new TileInfo(
+      vec2(0, 0),
+      vec2(animData.width, animData.height),
+      animData.tileIndex
+    );
   }
 
   update() {
@@ -221,8 +237,27 @@ class Enemy extends EngineObject {
     } else {
       this.patrolUpdate();
     }
+    if (this.velocity.x > 0) {
+      this.mirror = true;
+    } else if (this.velocity.x < 0) {
+      this.mirror = false;
+    }
+    this.animate();
     this.attack();
     super.update();
+  }
+  animate() {
+    const animData = ListsSpriteFrameEnemy.walk;
+    if (abs(this.velocity.x) > 0.001) {
+      this.frame = (time * animData.speed) % animData.frames | 0;
+    } else {
+      this.frame = 0;
+    }
+    this.tileInfo = new TileInfo(
+      vec2(this.frame * animData.width, 0),
+      vec2(animData.width, animData.height),
+      animData.tileIndex
+    );
   }
   patrolUpdate() {
     if (this.direction > 0 && this.pos.x >= this.rightBound) {
@@ -232,7 +267,7 @@ class Enemy extends EngineObject {
     }
     this.velocity.x = this.direction * this.speed;
   }
-
+  loadSprite() {}
   chaseUpdate() {
     const dirToPlayer = sign(this.player.pos.x - this.pos.x);
     this.velocity.x = dirToPlayer * this.chaseSpeed;
@@ -370,12 +405,13 @@ class CloudParticles extends ParticleEmitter {
 }
 class WoodTool extends EngineObject {
   constructor(pos) {
-    super(pos, vec2(1, 1), null, 0, YELLOW);
+    super(pos, vec2(2, 2));
     this.collide = false;
     this.mass = 0;
     this.player = null;
     this.spawner = null;
     this.spawnX = pos.x;
+    this.tileInfo = new TileInfo(vec2(0, 0), vec2(500, 500), 4);
   }
 
   update() {
@@ -971,4 +1007,6 @@ engineInit(gameInit, gameUpdate, gameUpdatePost, gameRender, gameRenderPost, [
   "tiles.png",
   "/media/player/john_idle.png",
   "/media/bg/Layer.png",
+  "/tiles/dog.png",
+  "/tiles/tools.png",
 ]);

@@ -41,6 +41,8 @@ let isPause = false;
 let isStar = true;
 let menuInstance = null;
 let gameObjects = [];
+let paused_Button = null;
+let stilt_Bar = null;
 function startGame() {
   destroyAndResetGame();
   createGameObjects();
@@ -74,6 +76,8 @@ function destroyAndResetGame() {
   isVelocityUnityIsMax = false;
   isGameOver = false;
   isYouWin = false;
+  paused_Button = null;
+  stilt_Bar = null;
 }
 ///////////
 
@@ -697,12 +701,9 @@ class Goal extends EngineObject {
 class StiltBar extends UIScrollbar {
   constructor(pos, size) {
     super(pos, size);
+    this.interactive = false;
   }
   update() {
-    if (gameState !== GAME_STATE.PLAYING) {
-      this.visible = false;
-      return;
-    }
     const stiltValue = parseFloat(current_stilt_height / 10).toFixed(2);
     this.getValue(stiltValue);
     super.update();
@@ -754,15 +755,8 @@ class PauseButton extends UIButton {
   constructor(pos, size) {
     super(pos, size);
     this.text = "Pause";
-    this.onClick = pauseGame();
-    console.log(this);
-  }
-  update() {
-    if (gameState !== GAME_STATE.PLAYING) {
-      this.visible = false;
-    } else {
-      this.visible = true;
-    }
+    this.onClick = pauseGame;
+    this.interactive = true;
   }
 }
 class Menu extends EngineObject {
@@ -928,8 +922,8 @@ function createGameObjects() {
 
   canvasClearColor = hsl(0.6, 0.3, 0.5);
   bg = tile(vec2(0, 0), canvasMaxSize, 2);
-  gameObjects.push(new StiltBar(vec2(200, 150), vec2(300, 20)));
-  gameObjects.push(new PauseButton(vec2(200, 75), vec2(200, 50)));
+  stilt_Bar = new StiltBar(vec2(200, 150), vec2(300, 20));
+  paused_Button = new PauseButton(vec2(200, 75), vec2(200, 50));
 }
 ////////////////////////////////////////////////////////////////////////
 function gameInit() {
@@ -937,6 +931,7 @@ function gameInit() {
   uiSystem.defaultSoundClick = new Sound([0.5, 0, 440]);
   uiSystem.defaultCornerRadius = 20;
   uiSystem.defaultShadowColor = CYAN;
+
   gravity.y = -0.05;
   menuInstance = new Menu();
   createGameObjects();
@@ -945,7 +940,17 @@ function gameInit() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-function gameUpdate() {}
+function gameUpdate() {
+  if (paused_Button && stilt_Bar) {
+    if (gameState !== GAME_STATE.PLAYING) {
+      paused_Button.visible = false;
+      stilt_Bar.visible = false;
+    } else {
+      paused_Button.visible = true;
+      stilt_Bar.visible = true;
+    }
+  }
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 function gameUpdatePost() {}

@@ -51,6 +51,11 @@ function endGame() {
     gameState = GAME_STATE.GAME_OVER;
   }
 }
+function pauseGame() {
+  if (gameState === GAME_STATE.PLAYING) {
+    gameState = GAME_STATE.PAUSED;
+  }
+}
 function winGame() {
   if (gameState === GAME_STATE.PLAYING) {
     gameState = GAME_STATE.YOU_WIN;
@@ -745,6 +750,21 @@ class StiltBar extends UIScrollbar {
     }
   }
 }
+class PauseButton extends UIButton {
+  constructor(pos, size) {
+    super(pos, size);
+    this.text = "Pause";
+    this.onClick = pauseGame();
+    console.log(this);
+  }
+  update() {
+    if (gameState !== GAME_STATE.PLAYING) {
+      this.visible = false;
+    } else {
+      this.visible = true;
+    }
+  }
+}
 class Menu extends EngineObject {
   constructor() {
     const canvas = canvasMaxSize.scale(0.5);
@@ -908,7 +928,8 @@ function createGameObjects() {
 
   canvasClearColor = hsl(0.6, 0.3, 0.5);
   bg = tile(vec2(0, 0), canvasMaxSize, 2);
-  gameObjects.push(new StiltBar(vec2(200, 100), vec2(300, 20)));
+  gameObjects.push(new StiltBar(vec2(200, 150), vec2(300, 20)));
+  gameObjects.push(new PauseButton(vec2(200, 75), vec2(200, 50)));
 }
 ////////////////////////////////////////////////////////////////////////
 function gameInit() {

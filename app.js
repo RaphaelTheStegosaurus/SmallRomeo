@@ -27,10 +27,9 @@ const GAME_STATE = {
 };
 let gameState = GAME_STATE.START_MENU;
 ///////////
-//Mis variables globales
 let current_stilt_height;
-let velocity_time = 10;
-let velocity_unity = 0.0;
+let velocity_time = 6;
+let velocity_unity = 0.1;
 let uiRoot;
 let textDemo;
 
@@ -49,13 +48,11 @@ function startGame() {
 }
 function endGame() {
   if (gameState === GAME_STATE.PLAYING) {
-    // Evita llamadas repetidas/tardías
     gameState = GAME_STATE.GAME_OVER;
   }
 }
 function winGame() {
   if (gameState === GAME_STATE.PLAYING) {
-    // Evita llamadas repetidas/tardías
     gameState = GAME_STATE.YOU_WIN;
   }
 }
@@ -66,8 +63,8 @@ function destroyAndResetGame() {
     }
   }
   gameObjects = [];
-  velocity_time = 10;
-  velocity_unity = 0.0;
+  velocity_time = 6;
+  velocity_unity = 0.1;
   isVelocityTimeIsMin = false;
   isVelocityUnityIsMax = false;
   isGameOver = false;
@@ -256,11 +253,11 @@ class EnemySpawner extends EngineObject {
   constructor(player) {
     super();
     this.player = player;
-    this.spawnInterval = 10;
+    this.spawnInterval = 1;
     this.timer = this.spawnInterval;
     this.activePositions = [];
     this.activeEnemies = [];
-    this.maxEnemies = 4;
+    this.maxEnemies = 8;
     this.minX = 5;
     this.maxX = 95;
   }
@@ -272,7 +269,7 @@ class EnemySpawner extends EngineObject {
       this.timer = this.spawnInterval;
       return;
     }
-    this.timer -= time;
+    this.timer -= timeDelta;
     if (this.timer <= 0) {
       this.spawnEnemy();
       this.timer = this.spawnInterval;
@@ -331,21 +328,6 @@ class EnemySpawner extends EngineObject {
     super.destroy();
   }
 }
-class CloudOfDog extends EngineObject {
-  constructor(player) {
-    super();
-    this.size = vec2(5, 2);
-    this.color = GRAY;
-    this.collide = false;
-    this.mass = 0;
-    this.pos.y = 1;
-    this.player = player;
-    console.log(this);
-  }
-  update() {
-    this.pos.x = this.player.pos.x;
-  }
-}
 class CloudParticles extends ParticleEmitter {
   constructor(posX) {
     super(
@@ -399,12 +381,11 @@ class WoodTool extends EngineObject {
           this.player.stiltObject.size
         )
       ) {
-        if (velocity_unity < 1.3) {
+        if (velocity_unity < 1.5) {
           velocity_unity += WOODTOOL_VALUE;
         }
         if (velocity_unity > 1 && !isVelocityUnityIsMax) {
           isVelocityUnityIsMax = true;
-          console.log("Están destruyendo lo máximo");
         }
         this.spawner.notifyDestroyed(this.spawnX);
         this.destroy();
@@ -417,9 +398,9 @@ class WoodToolSpawner extends EngineObject {
   constructor(player) {
     super();
     this.player = player;
-    this.spawnInterval = 5;
-    this.timer = 0;
-    this.maxTools = 3;
+    this.spawnInterval = 2;
+    this.timer = this.spawnInterval;
+    this.maxTools = 6;
     this.activePositions = [];
     this.activeTools = [];
     this.minX = 10;
@@ -434,7 +415,7 @@ class WoodToolSpawner extends EngineObject {
       this.timer = this.spawnInterval;
       return;
     }
-    this.timer -= time;
+    this.timer -= timeDelta;
     if (this.timer <= 0) {
       this.spawnWoodTool();
       this.timer = this.spawnInterval;
@@ -532,11 +513,9 @@ class Stilt extends EngineObject {
     super.destroy();
   }
   reduceY() {
-    this.shrinkTimer -= timeDelta;
     if (this.size.y > 0.2) {
-      if (this.shrinkTimer <= 0) {
+      if (time % velocity_time === 0) {
         this.size.y = this.size.y - velocity_unity;
-        this.shrinkTimer = velocity_time;
       }
     } else {
       if (gameState === GAME_STATE.PLAYING) {
@@ -600,12 +579,12 @@ class ItemSpawner extends EngineObject {
   constructor(player) {
     super();
     this.player = player;
-    this.spawnInterval = 5;
+    this.spawnInterval = 0.7;
     this.timer = this.spawnInterval;
-    this.maxItems = 18;
+    this.maxItems = 30;
     this.minX = 10;
     this.maxX = 85;
-    this.minY = 8;
+    this.minY = 6;
     this.maxY = 30;
     this.minDistance = 8;
     this.activePositions = [];
@@ -619,7 +598,7 @@ class ItemSpawner extends EngineObject {
       this.timer = this.spawnInterval;
       return;
     }
-    this.timer -= time;
+    this.timer -= timeDelta;
     if (this.timer <= 0) {
       this.spawnItem();
       this.timer = this.spawnInterval;

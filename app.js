@@ -22,7 +22,8 @@ const GAME_STATE = {
   PLAYING: 1,
   PAUSED: 2,
   GAME_OVER: 3,
-  ANIMATION_INTRO: 4,
+  YOU_WIN: 4,
+  ANIMATION_INTRO: 5,
 };
 let gameState = GAME_STATE.START_MENU;
 ///////////
@@ -48,6 +49,9 @@ function startGame() {
 }
 function endGame() {
   gameState = GAME_STATE.GAME_OVER;
+}
+function winGame() {
+  gameState = GAME_STATE.YOU_WIN;
 }
 function destroyAndResetGame() {
   for (const obj of gameObjects) {
@@ -679,7 +683,7 @@ class Goal extends EngineObject {
         this.pos.y < this.player.pos.y &&
         this.pos.y + 2 > this.player.pos.y
       ) {
-        isYouWin = true;
+        winGame();
       }
     }
   }
@@ -770,11 +774,50 @@ class Menu extends EngineObject {
       vec2(cameraWidth * 0.625, cameraHeight * 0.55),
       vec2(cameraWidth, cameraHeight)
     );
+    this.youWinContainer = this.loadYouWinMenu(
+      vec2(cameraWidth * 0.625, cameraHeight * 0.55),
+      vec2(cameraWidth, cameraHeight)
+    );
+    this.startContainer.visible = false;
+    this.pausedContainer.visible = false;
+    this.gameOverContainer.visible = false;
+    this.youWinContainer.visible = false;
   }
   update() {
-    this.startContainer.visible = gameState == GAME_STATE.START_MENU;
-    this.pausedContainer.visible = gameState == GAME_STATE.PAUSED;
-    this.gameOverContainer.visible = gameState == GAME_STATE.GAME_OVER;
+    if (gameState === GAME_STATE.PLAYING) {
+      this.startContainer.visible = false;
+      this.pausedContainer.visible = false;
+      this.gameOverContainer.visible = false;
+      this.youWinContainer.visible = false;
+    }
+    if (gameState == GAME_STATE.START_MENU) {
+      this.startContainer.visible = true;
+      this.pausedContainer.visible = false;
+      this.gameOverContainer.visible = false;
+      this.youWinContainer.visible = false;
+    }
+    if (gameState == GAME_STATE.PAUSED) {
+      this.startContainer.visible = false;
+      this.pausedContainer.visible = true;
+      this.gameOverContainer.visible = false;
+      this.youWinContainer.visible = false;
+    }
+    if (gameState == GAME_STATE.GAME_OVER) {
+      this.startContainer.visible = false;
+      this.pausedContainer.visible = false;
+      this.gameOverContainer.visible = true;
+      this.youWinContainer.visible = false;
+    }
+    if (gameState == GAME_STATE.YOU_WIN) {
+      this.startContainer.visible = false;
+      this.pausedContainer.visible = false;
+      this.gameOverContainer.visible = false;
+      this.youWinContainer.visible = true;
+    }
+    // this.startContainer.visible = gameState == GAME_STATE.START_MENU;
+    // this.pausedContainer.visible = gameState == GAME_STATE.PAUSED;
+    // this.gameOverContainer.visible = gameState == GAME_STATE.GAME_OVER;
+    // this.youWinContainer.visible = gameState == GAME_STATE.YOU_WIN;
     super.update();
   }
   loadStartMenu(pos, size) {
@@ -837,6 +880,40 @@ class Menu extends EngineObject {
     container.addChild(toMenuButton);
     return container;
   }
+  loadYouWinMenu(pos, size) {
+    const container = new UIObject(pos, size);
+    container.color = new Color(0, 0.5, 0, 0.8);
+    const youWinMenuText = new UIText(
+      vec2(0, -150),
+      vec2(400, 80),
+      "¡Victory!"
+    );
+    youWinMenuText.textColor = WHITE;
+    const restartButton = new UIButton(
+      vec2(0, -50),
+      vec2(250, 50),
+      "Play Again ?"
+    );
+    restartButton.onClick = () => {
+      container.visible = false;
+      startGame();
+    };
+    const toMenuButton = new UIButton(
+      vec2(0, 50),
+      vec2(250, 50),
+      "back to Menu"
+    );
+    toMenuButton.onClick = () => {
+      container.visible = false;
+      destroyAndResetGame();
+      gameState = GAME_STATE.START_MENU;
+    };
+
+    container.addChild(youWinMenuText);
+    container.addChild(restartButton);
+    container.addChild(toMenuButton);
+    return container;
+  }
 }
 function createGameObjects() {
   gameObjects = [];
@@ -882,22 +959,7 @@ function gameInit() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-function gameUpdate() {
-  if (gameState === GAME_STATE.PLAYING) {
-  }
-
-  if (isYouWin) {
-    // textDemo.textColor = GREEN;
-    // textDemo.text = "You Win!";
-  } else if (isGameOver) {
-    // textDemo.textColor = RED;
-    // textDemo.text = "Game Over";
-  } else {
-    // textDemo.text = `stilt height: ${parseFloat(current_stilt_height).toFixed(
-    //   2
-    // )} y baja a ${parseFloat(velocity_unity).toFixed(1)}/${velocity_time}s`;
-  }
-}
+function gameUpdate() {}
 
 ///////////////////////////////////////////////////////////////////////////////
 function gameUpdatePost() {}

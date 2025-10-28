@@ -2,17 +2,17 @@
 
 - [ ] Agregar UI:
   - [ ] UI Mientras Juegas:
-    - [ ] Agregar una Barra que indique el estado de los stilt.
+    - [x] Agregar una Barra que indique el estado de los stilt.
     - [ ] Agregar un contador de tiempo que has durado.
     - [ ] Botón de Pausa
   - [ ] Menu de Pausa
     - [ ] Botón de Regear a partida
     - [ ] Botón de Regresar a Menu Principal
     - [ ] Botón de Reiniciar.
-  - [ ] Menu con Start
-    - [ ] Botón de Comenzar Juego
+  - [x] Menu con Start
+    - [x] Botón de Comenzar Juego
     - [ ] Botón de Créditos
-- [ ] Mecánicas del juego
+- [x] Mecánicas del juego
   - [x] Agregar perros en ciertas areas al azar
   - [x] Agregar ciertos Maderas en ciertas zonas
   - [x] Agregar mecánica de perder

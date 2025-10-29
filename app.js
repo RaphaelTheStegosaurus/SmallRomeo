@@ -6,8 +6,8 @@ const ListsSpriteFramePlayer = {
     index: 1,
     frames: 5,
     speed: 8,
-    height: 22,
-    width: 22,
+    height: 500,
+    width: 500,
   },
 };
 const ListsSpriteFrameEnemy = {
@@ -100,13 +100,14 @@ class Player extends EngineObject {
       ),
       1
     );
-    super(pos, vec2(2, 2), tileInfo);
+    super(pos, vec2(4, 3));
     this.setCollision();
     this.frame = 0;
     this.animationTimer = 0;
     this.stiltObject = stilt;
     this.respawnPos = pos;
     this.JumpSound = new Sound([, , 1e3, , , 0.5, , , , , 99, 0.01, 0.03]);
+    this.tileInfo = new TileInfo(vec2(0, 0), vec2(500, 500), 1);
   }
   update() {
     if (gameState !== GAME_STATE.PLAYING) {
@@ -114,14 +115,17 @@ class Player extends EngineObject {
     }
     const moveInput = keyDirection();
     this.velocity.x += moveInput.x * (this.groundObject ? 0.1 : 0.01);
-    if (moveInput.x < 0) this.mirror = true;
-    else if (moveInput.x > 0) this.mirror = false;
-    //[ ] arreglar animation con un sprite justo a los sprites
-    // this.animate();
-
+    if (moveInput.x < 0) {
+      this.mirror = true;
+      this.tileInfo = new TileInfo(vec2(0, 0), vec2(500, 500), 1);
+    } else if (moveInput.x > 0) {
+      this.mirror = false;
+      this.tileInfo = new TileInfo(vec2(0, 0), vec2(500, 500), 1);
+    }
     if (this.groundObject && moveInput.y > 0) {
       this.JumpSound.play();
       this.velocity.y = 0.75;
+      this.tileInfo = new TileInfo(vec2(0, 0), vec2(500, 500), 7);
     }
     cameraPos = vec2(
       this.getCameraPosX(this.pos.x),
@@ -717,15 +721,15 @@ class Goal extends EngineObject {
     if (this.OverLappingX()) {
       if (
         this.pos.y < this.player.pos.y &&
-        this.pos.y + 2 > this.player.pos.y
+        this.pos.y + 4 > this.player.pos.y
       ) {
         winGame();
       }
     }
   }
   OverLappingX() {
-    const goalLeft = this.pos.x;
-    const goalRight = this.pos.x + this.size.x;
+    const goalLeft = this.pos.x - 2;
+    const goalRight = this.pos.x + this.size.x + 2;
     const playerLeft = this.player.pos.x;
     const playerRight = this.player.pos.x + this.player.size.x;
     const isCenterToRight = goalLeft < playerLeft;
@@ -1015,10 +1019,11 @@ function gameRenderPost() {
 // Startup LittleJS Engine
 engineInit(gameInit, gameUpdate, gameUpdatePost, gameRender, gameRenderPost, [
   "/tiles/tile_ground.png",
-  "/media/player/john_idle.png",
+  "/tiles/player-use-stilt.png",
   "/tiles/bg.png",
   "/tiles/dog.png",
   "/tiles/tools.png",
   "/tiles/stick_stilt.png",
   "/tiles/balcony.png",
+  "/tiles/player-jump.png",
 ]);

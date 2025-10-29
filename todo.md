@@ -4,11 +4,11 @@
   - [ ] UI Mientras Juegas:
     - [x] Agregar una Barra que indique el estado de los stilt.
     - [ ] Agregar un contador de tiempo que has durado.
-    - [ ] Botón de Pausa
-  - [ ] Menu de Pausa
-    - [ ] Botón de Regear a partida
-    - [ ] Botón de Regresar a Menu Principal
-    - [ ] Botón de Reiniciar.
+    - [x] Botón de Pausa
+  - [x] Menu de Pausa
+    - [x] Botón de Regear a partida
+    - [x] Botón de Regresar a Menu Principal
+    - [x] Botón de Reiniciar.
   - [x] Menu con Start
     - [x] Botón de Comenzar Juego
     - [ ] Botón de Créditos
@@ -21,25 +21,25 @@
   - [x] Agregar mecanica de ganar
 - [ ] Agregar Sprites Oficiales
   - [ ] Crear Sprites para el Personaje
-    - [ ] Sprite para Moverse
-    - [ ] Sprite para Estando Quieto
+    - [x] Sprite para Moverse
+    - [x] Sprite para Estando Quieto
     - [ ] Sprite para cuando estas apunto de perder
     - [ ] Sprite cuando estas cerca de tu amada
-  - [ ] Sprites para perros
-    - [ ] Sprite de Chihuahua enojado y quieto
+  - [ x] Sprites para perros
+    - [x] Sprite de Chihuahua enojado y quieto
     - [ ] Sprite de Chihuahua arrojándose al remolino
-    - [ ] Sprite de animación de remolino de perros
-  - [ ] Sprite de Escenario
-    - [ ] Sprite de Árbol
-    - [ ] Sprite de Ramas
-    - [ ] Sprite de Paredes del exterior de la casa
-    - [ ] Sprite de Paredes de la casa
-    - [ ] Sprite de Jardín
-      - [ ] Sprite de bancos
-      - [ ] Sprite de Mesa
-      - [ ] Sprite de Plantas
-      - [ ] Sprite de Arbustos
-      - [ ] Sprites Otros detalles
+    - [x] Sprite de animación de remolino de perros
+  - [x] Sprite de Escenario
+    - [x] Sprite de Árbol
+    - [x] Sprite de Ramas
+    - [x] Sprite de Paredes del exterior de la casa
+    - [x] Sprite de Paredes de la casa
+    - [x] Sprite de Jardín
+      - [x] Sprite de bancos
+      - [x] Sprite de Mesa
+      - [x] Sprite de Plantas
+      - [x] Sprite de Arbustos
+      - [x] Sprites Otros detalles
   - [ ] Sprite de story animation
     - [ ] Sprite de escena de Introducción
     - [ ] Sprite de escena de Perder

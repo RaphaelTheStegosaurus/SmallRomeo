@@ -797,6 +797,8 @@ class PauseButton extends UIButton {
   constructor(pos, size) {
     super(pos, size);
     this.text = "Pause";
+    this.font = `"Orbitron", sans-serif`;
+    this.color = rgb(0, 1, 1);
     this.onClick = pauseGame;
     this.interactive = true;
   }
@@ -841,12 +843,15 @@ class Menu extends EngineObject {
     const startMenuText = new UIText(
       vec2(0, -150),
       vec2(400, 80),
-      "Small Romeo"
+      "Romeo, you're small"
     );
-    const startButton = new UIButton(vec2(0, 0), vec2(150, 50), "start");
+    startMenuText.font = `"Bangers", system-ui`;
+    const startButton = new UIButton(vec2(0, 0), vec2(200, 75), "start");
     startButton.onClick = () => {
       startGame();
     };
+    startButton.font = `"Orbitron", sans-serif`;
+    startButton.color = rgb(0, 1, 1);
     container.addChild(startMenuText);
     container.addChild(startButton);
     return container;
@@ -855,10 +860,13 @@ class Menu extends EngineObject {
     const container = new UIObject(pos, size);
     container.color = new Color(0, 0, 0, 0.5);
     const pausedMenuText = new UIText(vec2(0, -150), vec2(400, 80), "Paused");
-    const continueButton = new UIButton(vec2(0, 0), vec2(200, 50), "Continue");
+    pausedMenuText.font = `"Limelight", sans-serif`;
+    const continueButton = new UIButton(vec2(0, 0), vec2(200, 75), "Continue");
     continueButton.onClick = () => {
       gameState = GAME_STATE.PLAYING;
     };
+    continueButton.font = `"Orbitron", sans-serif`;
+    continueButton.color = rgb(0, 1, 1);
     container.addChild(pausedMenuText);
     container.addChild(continueButton);
     return container;
@@ -871,11 +879,14 @@ class Menu extends EngineObject {
       vec2(400, 80),
       "Game Over"
     );
+    gameOverMenuText.font = `"Limelight", sans-serif`;
     const restartButton = new UIButton(
       vec2(0, -50),
-      vec2(250, 50),
+      vec2(250, 75),
       "Play Again ?"
     );
+    restartButton.font = `"Orbitron", sans-serif`;
+    restartButton.color = rgb(0, 1, 0, 1);
     restartButton.onClick = () => {
       container.visible = false;
       setTimeout(() => {
@@ -884,9 +895,11 @@ class Menu extends EngineObject {
     };
     const toMenuButton = new UIButton(
       vec2(0, 50),
-      vec2(250, 50),
+      vec2(250, 75),
       "back to Menu"
     );
+    toMenuButton.font = `"Orbitron", sans-serif`;
+    toMenuButton.color = rgb(1, 0, 0);
     toMenuButton.onClick = () => {
       container.visible = false;
       destroyAndResetGame();
@@ -906,12 +919,15 @@ class Menu extends EngineObject {
       vec2(400, 80),
       "¡Victory!"
     );
+    youWinMenuText.font = `"Limelight", sans-serif`;
     youWinMenuText.textColor = WHITE;
     const restartButton = new UIButton(
       vec2(0, -50),
       vec2(250, 50),
       "Play Again ?"
     );
+    restartButton.font = `"Orbitron", sans-serif`;
+    restartButton.color = rgb(0, 1, 0, 1);
     restartButton.onClick = () => {
       container.visible = false;
       setTimeout(() => {
@@ -923,6 +939,8 @@ class Menu extends EngineObject {
       vec2(250, 50),
       "back to Menu"
     );
+    toMenuButton.font = `"Orbitron", sans-serif`;
+    toMenuButton.color = rgb(1, 0, 0);
     toMenuButton.onClick = () => {
       container.visible = false;
       destroyAndResetGame();
@@ -973,7 +991,7 @@ function createGameObjects() {
   canvasClearColor = hsl(0.6, 0.3, 0.5);
   bg = tile(vec2(0, 0), vec2(585, 427), 2);
   stilt_Bar = new StiltBar(vec2(200, 150), vec2(300, 20));
-  paused_Button = new PauseButton(vec2(200, 75), vec2(200, 50));
+  paused_Button = new PauseButton(vec2(200, 75), vec2(200, 75));
 }
 ////////////////////////////////////////////////////////////////////////
 function gameInit() {

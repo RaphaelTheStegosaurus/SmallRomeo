@@ -886,7 +886,7 @@ class Menu extends EngineObject {
       "Play Again ?"
     );
     restartButton.font = `"Orbitron", sans-serif`;
-    restartButton.color = rgb(0, 1, 0, 1);
+    restartButton.color = rgb(0, 1, 0);
     restartButton.onClick = () => {
       container.visible = false;
       setTimeout(() => {
@@ -927,7 +927,7 @@ class Menu extends EngineObject {
       "Play Again ?"
     );
     restartButton.font = `"Orbitron", sans-serif`;
-    restartButton.color = rgb(0, 1, 0, 1);
+    restartButton.color = rgb(0, 1, 0);
     restartButton.onClick = () => {
       container.visible = false;
       setTimeout(() => {

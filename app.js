@@ -959,7 +959,7 @@ function createGameObjects() {
   gameObjects.push(new ItemSpawner(player));
 
   canvasClearColor = hsl(0.6, 0.3, 0.5);
-  bg = tile(vec2(0, 0), canvasMaxSize, 2);
+  bg = tile(vec2(0, 0), vec2(1472, 704), 2);
   stilt_Bar = new StiltBar(vec2(200, 150), vec2(300, 20));
   paused_Button = new PauseButton(vec2(200, 75), vec2(200, 50));
 }
@@ -995,7 +995,7 @@ function gameUpdatePost() {}
 
 ///////////////////////////////////////////////////////////////////////////////
 function gameRender() {
-  drawTile(vec2(40, 12), vec2(80, 40), bg);
+  drawTile(vec2(50, 15), vec2(100, 40), bg, new Color(1, 1, 1, 0.5));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1008,7 +1008,7 @@ function gameRenderPost() {
 engineInit(gameInit, gameUpdate, gameUpdatePost, gameRender, gameRenderPost, [
   "tiles.png",
   "/media/player/john_idle.png",
-  "/media/bg/Layer.png",
+  "/tiles/bg01.png",
   "/tiles/dog.png",
   "/tiles/tools.png",
   "/tiles/stick_stilt.png",

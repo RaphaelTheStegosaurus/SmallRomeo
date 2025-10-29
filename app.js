@@ -541,6 +541,7 @@ class Stilt extends EngineObject {
       0.1,
     ]);
     this.shrinkTimer = velocity_time;
+    this.tileInfo = new TileInfo(vec2(0, 0), vec2(32, 32), 5);
   }
   update() {
     if (gameState !== GAME_STATE.PLAYING) {
@@ -578,7 +579,7 @@ class Stilt extends EngineObject {
 }
 class Item extends EngineObject {
   constructor(pos) {
-    super(pos, vec2(0.5, 0.5), null, 0, GREEN);
+    super(pos, vec2(2, 2));
     this.collide = false;
     this.mass = 0;
     this.player = null;
@@ -604,6 +605,7 @@ class Item extends EngineObject {
       ,
       0.04,
     ]);
+    this.tileInfo = new TileInfo(vec2(0, 32), vec2(32, 32), 5);
   }
   update() {
     if (gameState !== GAME_STATE.PLAYING) {
@@ -1009,4 +1011,5 @@ engineInit(gameInit, gameUpdate, gameUpdatePost, gameRender, gameRenderPost, [
   "/media/bg/Layer.png",
   "/tiles/dog.png",
   "/tiles/tools.png",
+  "/tiles/stick_stilt.png",
 ]);

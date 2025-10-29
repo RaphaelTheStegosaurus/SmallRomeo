@@ -174,7 +174,7 @@ class Level extends EngineObject {
     const tileLayer = new TileCollisionLayer(
       vec2(0, -1),
       levelSize,
-      new TileInfo(vec2(0, 0), vec2(16, 16), 0)
+      new TileInfo(vec2(0, 0), vec2(40, 40), 0)
     );
     const groundLevelY = 5;
     for (pos.x = 0; pos.x < levelSize.x; pos.x++) {
@@ -932,6 +932,14 @@ class Menu extends EngineObject {
     return container;
   }
 }
+class Balcony extends EngineObject {
+  constructor() {
+    super(vec2(109, 32), vec2(58, 42));
+    this.collide = false;
+    this.mass = 0;
+    this.tileInfo = new TileInfo(vec2(0, 0), vec2(582, 427), 6);
+  }
+}
 function createGameObjects() {
   gameObjects = [];
   gameObjects.push(new Level());
@@ -957,9 +965,9 @@ function createGameObjects() {
 
   player.stiltObject = stilt;
   gameObjects.push(new ItemSpawner(player));
-
+  gameObjects.push(new Balcony());
   canvasClearColor = hsl(0.6, 0.3, 0.5);
-  bg = tile(vec2(0, 0), vec2(1472, 704), 2);
+  bg = tile(vec2(0, 0), vec2(585, 427), 2);
   stilt_Bar = new StiltBar(vec2(200, 150), vec2(300, 20));
   paused_Button = new PauseButton(vec2(200, 75), vec2(200, 50));
 }
@@ -995,7 +1003,7 @@ function gameUpdatePost() {}
 
 ///////////////////////////////////////////////////////////////////////////////
 function gameRender() {
-  drawTile(vec2(50, 15), vec2(100, 40), bg, new Color(1, 1, 1, 0.5));
+  drawTile(vec2(50, 20), vec2(100, 40), bg, new Color(1, 1, 1, 0.75));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1006,10 +1014,11 @@ function gameRenderPost() {
 ///////////////////////////////////////////////////////////////////////////////
 // Startup LittleJS Engine
 engineInit(gameInit, gameUpdate, gameUpdatePost, gameRender, gameRenderPost, [
-  "tiles.png",
+  "/tiles/tile_ground.png",
   "/media/player/john_idle.png",
-  "/tiles/bg01.png",
+  "/tiles/bg.png",
   "/tiles/dog.png",
   "/tiles/tools.png",
   "/tiles/stick_stilt.png",
+  "/tiles/balcony.png",
 ]);

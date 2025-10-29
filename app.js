@@ -841,17 +841,25 @@ class Menu extends EngineObject {
     const container = new UIObject(pos, size);
     container.color = new Color(1, 1, 1, 0.9);
     const startMenuText = new UIText(
-      vec2(0, -150),
+      vec2(-40, -120),
       vec2(400, 80),
       "Romeo, you're small"
     );
     startMenuText.font = `"Bangers", system-ui`;
-    const startButton = new UIButton(vec2(0, 0), vec2(200, 75), "start");
+    startMenuText.textColor = rgb(0.7, 0.2, 0.6);
+
+    const startButton = new UIButton(vec2(200, 0), vec2(200, 75), "start");
     startButton.onClick = () => {
       startGame();
     };
     startButton.font = `"Orbitron", sans-serif`;
     startButton.color = rgb(0, 1, 1);
+    const Bg_menu = new UITile(
+      vec2(0, 0),
+      vec2(size.x, size.y),
+      new TileInfo(vec2(0, 400), vec2(size.x, size.y), 8)
+    );
+    container.addChild(Bg_menu);
     container.addChild(startMenuText);
     container.addChild(startButton);
     return container;
@@ -875,13 +883,13 @@ class Menu extends EngineObject {
     const container = new UIObject(pos, size);
     container.color = new Color(0.5, 0, 0, 0.8);
     const gameOverMenuText = new UIText(
-      vec2(0, -150),
+      vec2(300, -150),
       vec2(400, 80),
       "Game Over"
     );
     gameOverMenuText.font = `"Limelight", sans-serif`;
     const restartButton = new UIButton(
-      vec2(0, -50),
+      vec2(300, -50),
       vec2(250, 75),
       "Play Again ?"
     );
@@ -894,7 +902,7 @@ class Menu extends EngineObject {
       }, 1);
     };
     const toMenuButton = new UIButton(
-      vec2(0, 50),
+      vec2(300, 50),
       vec2(250, 75),
       "back to Menu"
     );
@@ -906,6 +914,12 @@ class Menu extends EngineObject {
       createGameObjects();
       gameState = GAME_STATE.START_MENU;
     };
+    const Bg_menu = new UITile(
+      vec2(0, 0),
+      vec2(size.x, size.y),
+      new TileInfo(vec2(0, 100), vec2(size.x, size.y), 9)
+    );
+    container.addChild(Bg_menu);
     container.addChild(gameOverMenuText);
     container.addChild(restartButton);
     container.addChild(toMenuButton);
@@ -915,14 +929,14 @@ class Menu extends EngineObject {
     const container = new UIObject(pos, size);
     container.color = new Color(0, 0.5, 0, 0.8);
     const youWinMenuText = new UIText(
-      vec2(0, -150),
+      vec2(-250, -150),
       vec2(400, 80),
       "¡Victory!"
     );
     youWinMenuText.font = `"Limelight", sans-serif`;
     youWinMenuText.textColor = WHITE;
     const restartButton = new UIButton(
-      vec2(0, -50),
+      vec2(-250, -50),
       vec2(250, 50),
       "Play Again ?"
     );
@@ -935,7 +949,7 @@ class Menu extends EngineObject {
       }, 1);
     };
     const toMenuButton = new UIButton(
-      vec2(0, 50),
+      vec2(-250, 50),
       vec2(250, 50),
       "back to Menu"
     );
@@ -947,7 +961,12 @@ class Menu extends EngineObject {
       createGameObjects();
       gameState = GAME_STATE.START_MENU;
     };
-
+    const Bg_menu = new UITile(
+      vec2(0, 0),
+      vec2(size.x, size.y),
+      new TileInfo(vec2(0, 100), vec2(size.x, size.y), 10)
+    );
+    container.addChild(Bg_menu);
     container.addChild(youWinMenuText);
     container.addChild(restartButton);
     container.addChild(toMenuButton);
@@ -1044,4 +1063,7 @@ engineInit(gameInit, gameUpdate, gameUpdatePost, gameRender, gameRenderPost, [
   "/tiles/stick_stilt.png",
   "/tiles/balcony.png",
   "/tiles/player-jump.png",
+  "/tiles/start.png",
+  "/tiles/game_over.jpg",
+  "/tiles/win_screen.png",
 ]);

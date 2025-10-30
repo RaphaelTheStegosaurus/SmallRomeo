@@ -52,6 +52,16 @@ let menuInstance = null;
 let gameObjects = [];
 let paused_Button = null;
 let stilt_Bar = null;
+let soundEffectScreen = null;
+let soundEffectDogs = null;
+function playEffectScreenSound() {
+  if (soundEffectScreen) {
+    soundEffectScreen.play();
+  }
+  if (soundEffectDogs) {
+    soundEffectDogs.play();
+  }
+}
 function startGame() {
   destroyAndResetGame();
   createGameObjects();
@@ -59,6 +69,13 @@ function startGame() {
 }
 function endGame() {
   if (gameState === GAME_STATE.PLAYING) {
+    soundEffectScreen = new SoundWave(
+      "/audios/gameover.mp3",
+      0,
+      1,
+      0.7,
+      playEffectScreenSound
+    );
     gameState = GAME_STATE.GAME_OVER;
   }
 }
@@ -69,6 +86,13 @@ function pauseGame() {
 }
 function winGame() {
   if (gameState === GAME_STATE.PLAYING) {
+    soundEffectScreen = new SoundWave(
+      "/audios/win.mp3",
+      0,
+      1,
+      0.7,
+      playEffectScreenSound
+    );
     gameState = GAME_STATE.YOU_WIN;
   }
 }
@@ -87,6 +111,8 @@ function destroyAndResetGame() {
   isYouWin = false;
   paused_Button = null;
   stilt_Bar = null;
+  soundEffectScreen = null;
+  soundEffectDogs = null;
 }
 ///////////
 
@@ -212,7 +238,13 @@ class Enemy extends EngineObject {
     this.rightBound = pos.x + this.range / 2;
     this.spawner = null;
     this.spawnX = pos.x;
-
+    soundEffectDogs = new SoundWave(
+      "/audios/chihuahua.mp3",
+      0,
+      1,
+      0.7,
+      playEffectScreenSound
+    );
     const animData = ListsSpriteFrameEnemy.walk;
     const tileInfo = new TileInfo(
       vec2(0, 0),
@@ -1028,6 +1060,8 @@ function gameInit() {
 
 ///////////////////////////////////////////////////////////////////////////////
 function gameUpdate() {
+  if (gameState == GAME_STATE.GAME_OVER) {
+  }
   if (paused_Button && stilt_Bar) {
     if (gameState !== GAME_STATE.PLAYING) {
       paused_Button.visible = false;

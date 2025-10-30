@@ -55,6 +55,8 @@ let stilt_Bar = null;
 let soundEffectScreen = null;
 let soundEffectDogs = null;
 let soundEffectCuttingStilt = null;
+let music_bg = null;
+let music_instanced = null;
 function playEffectScreenSound() {
   if (soundEffectScreen) {
     soundEffectScreen.play();
@@ -66,10 +68,21 @@ function playEffectScreenSound() {
     soundEffectCuttingStilt.play();
   }
 }
+function setBgMusic() {
+  music_bg = new SoundWave("/audios/music_game.mp3", 0, 1, 0.7, playBgMusic);
+}
+function playBgMusic() {
+  if (music_bg) {
+    music_instanced = music_bg.play(null, 1, 1, 0, true, false);
+  }
+}
 function startGame() {
   destroyAndResetGame();
   createGameObjects();
   gameState = GAME_STATE.PLAYING;
+  if (music_instanced) {
+    music_instanced.resume();
+  }
 }
 function endGame() {
   if (gameState === GAME_STATE.PLAYING) {
@@ -81,11 +94,14 @@ function endGame() {
       playEffectScreenSound
     );
     gameState = GAME_STATE.GAME_OVER;
+    music_instanced.pause();
   }
 }
 function pauseGame() {
   if (gameState === GAME_STATE.PLAYING) {
     gameState = GAME_STATE.PAUSED;
+    music_instanced.pause();
+    isPause = true;
   }
 }
 function winGame() {
@@ -98,6 +114,7 @@ function winGame() {
       playEffectScreenSound
     );
     gameState = GAME_STATE.YOU_WIN;
+    music_instanced.pause();
   }
 }
 function destroyAndResetGame() {
@@ -112,6 +129,7 @@ function destroyAndResetGame() {
   isVelocityTimeIsMin = false;
   isVelocityUnityIsMax = false;
   isGameOver = false;
+  isPause = false;
   isYouWin = false;
   paused_Button = null;
   stilt_Bar = null;
@@ -923,6 +941,8 @@ class Menu extends EngineObject {
     const continueButton = new UIButton(vec2(0, 0), vec2(200, 75), "Continue");
     continueButton.onClick = () => {
       gameState = GAME_STATE.PLAYING;
+      isPause = false;
+      music_instanced.resume();
     };
     continueButton.font = `"Orbitron", sans-serif`;
     continueButton.color = rgb(0, 1, 1);
@@ -1065,11 +1085,14 @@ function createGameObjects() {
 }
 ////////////////////////////////////////////////////////////////////////
 function gameInit() {
+  setBgMusic();
+  if (music_instanced) {
+    music_instanced.pause();
+  }
   new UISystemPlugin();
   uiSystem.defaultSoundClick = new Sound([0.5, 0, 440]);
   uiSystem.defaultCornerRadius = 20;
   uiSystem.defaultShadowColor = CYAN;
-
   gravity.y = -0.05;
   menuInstance = new Menu();
   createGameObjects();

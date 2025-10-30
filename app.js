@@ -54,12 +54,16 @@ let paused_Button = null;
 let stilt_Bar = null;
 let soundEffectScreen = null;
 let soundEffectDogs = null;
+let soundEffectCuttingStilt = null;
 function playEffectScreenSound() {
   if (soundEffectScreen) {
     soundEffectScreen.play();
   }
   if (soundEffectDogs) {
     soundEffectDogs.play();
+  }
+  if (soundEffectCuttingStilt) {
+    soundEffectCuttingStilt.play();
   }
 }
 function startGame() {
@@ -113,6 +117,7 @@ function destroyAndResetGame() {
   stilt_Bar = null;
   soundEffectScreen = null;
   soundEffectDogs = null;
+  soundEffectCuttingStilt = null;
 }
 ///////////
 
@@ -476,6 +481,13 @@ class WoodTool extends EngineObject {
           isVelocityUnityIsMax = true;
         }
         this.spawner.notifyDestroyed(this.spawnX);
+        soundEffectCuttingStilt = new SoundWave(
+          "/audios/cutting_stilt.mp3",
+          0,
+          1,
+          0.7,
+          playEffectScreenSound
+        );
         this.destroy();
       }
     }

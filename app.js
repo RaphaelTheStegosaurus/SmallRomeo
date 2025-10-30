@@ -325,6 +325,13 @@ class Enemy extends EngineObject {
       if (velocity_time > 1) {
         velocity_time -= 1;
       }
+      soundEffectDogs = new SoundWave(
+        "/audios/chihuahua_angry.mp3",
+        0,
+        1,
+        0.7,
+        playEffectScreenSound
+      );
       this.destroy();
     }
   }

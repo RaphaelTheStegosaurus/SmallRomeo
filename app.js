@@ -10,7 +10,7 @@ const ListsSpriteFramePlayer = {
     width: 500,
   },
 };
-const ListsSpriteFrameEnemy = {
+const ListsSpriteFrameDogChihuahua = {
   walk: {
     frames: 3,
     speed: 6,
@@ -249,7 +249,7 @@ class Boundary extends EngineObject {
     this.mass = 0;
   }
 }
-class Enemy extends EngineObject {
+class DogChihuahua extends EngineObject {
   constructor(pos) {
     super(pos, vec2(1.5, 1.5));
     this.setCollision();
@@ -264,7 +264,7 @@ class Enemy extends EngineObject {
     this.rightBound = pos.x + this.range / 2;
     this.spawner = null;
     this.spawnX = pos.x;
-    const animData = ListsSpriteFrameEnemy.walk;
+    const animData = ListsSpriteFrameDogChihuahua.walk;
     const tileInfo = new TileInfo(
       vec2(0, 0),
       vec2(animData.width, animData.height),
@@ -311,7 +311,7 @@ class Enemy extends EngineObject {
     super.update();
   }
   animate() {
-    const animData = ListsSpriteFrameEnemy.walk;
+    const animData = ListsSpriteFrameDogChihuahua.walk;
     if (abs(this.velocity.x) > 0.001) {
       this.frame = (time * animData.speed) % animData.frames | 0;
     } else {
@@ -341,11 +341,12 @@ class Enemy extends EngineObject {
     if (!stilt) {
       return;
     }
-    const enemyLeft = this.pos.x;
-    const enemyRight = this.pos.x + this.size.x;
+    const DogChihuahuaLeft = this.pos.x;
+    const DogChihuahuaRight = this.pos.x + this.size.x;
     const stiltLeft = stilt.pos.x;
     const stiltRight = stilt.pos.x + stilt.size.x;
-    const isOverlappingX = enemyRight > stiltLeft && enemyLeft < stiltRight;
+    const isOverlappingX =
+      DogChihuahuaRight > stiltLeft && DogChihuahuaLeft < stiltRight;
     if (isOverlappingX) {
       if (this.spawner) {
         this.spawner.notifyDestroyed(this.spawnX);
@@ -357,7 +358,7 @@ class Enemy extends EngineObject {
     }
   }
 }
-class EnemySpawner extends EngineObject {
+class DogChihuahuaSpawner extends EngineObject {
   constructor(player) {
     super();
     this.player = player;
@@ -381,7 +382,7 @@ class EnemySpawner extends EngineObject {
     }
     this.timer -= timeDelta;
     if (this.timer <= 0) {
-      this.spawnEnemy();
+      this.spawnDogChihuahua();
       this.timer = this.spawnInterval;
     }
   }
@@ -406,19 +407,19 @@ class EnemySpawner extends EngineObject {
     return null;
   }
 
-  spawnEnemy() {
+  spawnDogChihuahua() {
     const xPos = this.getRandomXPosition();
     if (xPos === null) return;
     if (gameState === GAME_STATE.PLAYING && this.spawnSound) {
       this.spawnSound.play().setVolume(soundEffectVolumen);
     }
     const pos = vec2(xPos, 3);
-    const newEnemy = new Enemy(pos);
-    newEnemy.player = this.player;
-    newEnemy.spawner = this;
-    newEnemy.spawnX = xPos;
+    const newDogChihuahua = new DogChihuahua(pos);
+    newDogChihuahua.player = this.player;
+    newDogChihuahua.spawner = this;
+    newDogChihuahua.spawnX = xPos;
     this.activePositions.push(xPos);
-    this.activeEnemies.push(newEnemy);
+    this.activeEnemies.push(newDogChihuahua);
   }
   notifyDestroyed(xPos) {
     const index = this.activePositions.indexOf(xPos);
@@ -432,9 +433,9 @@ class EnemySpawner extends EngineObject {
     }
   }
   destroyAllSpawned() {
-    for (const enemy of this.activeEnemies) {
-      if (enemy) {
-        enemy.destroy();
+    for (const DogChihuahua of this.activeEnemies) {
+      if (DogChihuahua) {
+        DogChihuahua.destroy();
       }
     }
     this.activeEnemies = [];
@@ -1078,7 +1079,7 @@ function createGameObjects() {
   gameObjects.push(stilt);
 
   gameObjects.push(new Goal(vec2(97, wallHeight - 10), player));
-  gameObjects.push(new EnemySpawner(player));
+  gameObjects.push(new DogChihuahuaSpawner(player));
   gameObjects.push(new WoodToolSpawner(player));
 
   player.stiltObject = stilt;

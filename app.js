@@ -74,6 +74,11 @@ function startGame() {
     music_instanced.resume();
   }
 }
+function playEffectScreenSound() {
+  if (soundEffectScreen) {
+    soundEffectScreen.play().setVolume(musicVolumen);
+  }
+}
 function endGame() {
   if (gameState === GAME_STATE.PLAYING) {
     soundEffectScreen = new SoundWave(
@@ -470,7 +475,6 @@ class WoodTool extends EngineObject {
     this.spawner = null;
     this.spawnX = pos.x;
     this.tileInfo = new TileInfo(vec2(0, 0), vec2(500, 500), 4);
-    this.soundDestroy = new SoundWave("/audios/cutting_stilt.mp3", 0, 1, 0.7);
   }
 
   update() {
@@ -491,9 +495,6 @@ class WoodTool extends EngineObject {
         if (velocity_unity > 1 && !isVelocityUnityIsMax) {
           isVelocityUnityIsMax = true;
         }
-        if (this.soundDestroy) {
-          this.soundDestroy.play().setVolume(soundEffectVolumen);
-        }
         this.spawner.notifyDestroyed(this.spawnX);
         this.destroy();
       }
@@ -513,6 +514,8 @@ class WoodToolSpawner extends EngineObject {
     this.minX = 10;
     this.maxX = 90;
     this.minDistance = 8;
+    this.woodToolSoundInstance = null;
+    this.soundDestroy = new SoundWave("/audios/cutting_stilt.mp3", 0, 1, 0.7);
   }
   update() {
     if (gameState !== GAME_STATE.PLAYING) {
@@ -563,6 +566,9 @@ class WoodToolSpawner extends EngineObject {
     if (index !== -1) {
       this.activePositions.splice(index, 1);
       this.activeTools.splice(index, 1);
+      if (this.soundDestroy) {
+        this.soundDestroy.play().setVolume(soundEffectVolumen);
+      }
     }
     this.timer = this.spawnInterval;
   }

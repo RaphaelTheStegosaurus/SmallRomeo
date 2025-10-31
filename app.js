@@ -657,7 +657,7 @@ class Stilt extends EngineObject {
     this.sound.play();
   }
 }
-class Item extends EngineObject {
+class Stick extends EngineObject {
   constructor(pos) {
     super(pos, vec2(2, 2));
     this.collide = false;
@@ -702,7 +702,7 @@ class Item extends EngineObject {
     super.update();
   }
 }
-class ItemSpawner extends EngineObject {
+class StickSpawner extends EngineObject {
   constructor(player) {
     super();
     this.player = player;
@@ -760,7 +760,7 @@ class ItemSpawner extends EngineObject {
   spawnItem() {
     const pos = this.getRandomPosition();
     if (pos === null) return;
-    const newItem = new Item(pos);
+    const newItem = new Stick(pos);
     newItem.player = this.player;
     newItem.spawner = this;
     this.activePositions.push(pos);
@@ -1083,7 +1083,7 @@ function createGameObjects() {
   gameObjects.push(new WoodToolSpawner(player));
 
   player.stiltObject = stilt;
-  gameObjects.push(new ItemSpawner(player));
+  gameObjects.push(new StickSpawner(player));
   gameObjects.push(new Balcony());
   canvasClearColor = hsl(0.6, 0.3, 0.5);
   bg = tile(vec2(0, 0), vec2(585, 427), 2);

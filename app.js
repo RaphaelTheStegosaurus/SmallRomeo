@@ -57,6 +57,7 @@ let soundEffectVolumen = 0.5;
 let musicVolumen = 1.0;
 let music_bg = null;
 let music_instanced = null;
+let videoAnimation = null;
 function setBgMusic() {
   music_bg = new SoundWave("/audios/music_game.mp3", 0, 1, 0.7, playBgMusic);
 }
@@ -889,16 +890,22 @@ class Menu extends EngineObject {
       vec2(cameraWidth * 0.625, cameraHeight * 0.55),
       vec2(cameraWidth, cameraHeight)
     );
+    this.animationContainer = this.loadAnimation(
+      vec2(cameraWidth * 0.625, cameraHeight * 0.55),
+      vec2(cameraWidth, cameraHeight)
+    );
     this.startContainer.visible = false;
     this.pausedContainer.visible = false;
     this.gameOverContainer.visible = false;
     this.youWinContainer.visible = false;
+    this.animationContainer.visible = false;
   }
   update() {
     this.startContainer.visible = gameState == GAME_STATE.START_MENU;
     this.pausedContainer.visible = gameState == GAME_STATE.PAUSED;
     this.gameOverContainer.visible = gameState == GAME_STATE.GAME_OVER;
     this.youWinContainer.visible = gameState == GAME_STATE.YOU_WIN;
+    this.animationContainer.visible = gameState == GAME_STATE.ANIMATION_INTRO;
     super.update();
   }
   loadStartMenu(pos, size) {
@@ -926,6 +933,28 @@ class Menu extends EngineObject {
     container.addChild(Bg_menu);
     container.addChild(startMenuText);
     container.addChild(startButton);
+    return container;
+  }
+  loadAnimation(pos, size) {
+    const container = new UIObject(pos, size);
+    if (videoAnimation) {
+      const video = new UIVideo(vec2(0, 0), size, videoAnimation, true, false);
+      container.addChild(video);
+    } else {
+      const defaultText = new UIText(
+        vec2(0, -150),
+        vec2(400, 80),
+        "Error to load video, please skip"
+      );
+      container.addChild(defaultText);
+    }
+    const skipButton = new UIButton(vec2(300, -150), vec2(200, 75), "Skip");
+    skipButton.font = `"Orbitron", sans-serif`;
+    skipButton.color = rgb(0, 1, 1);
+    skipButton.onClick = () => {
+      gameState = GAME_STATE.PLAYING;
+    };
+    container.addChild(skipButton);
     return container;
   }
   loadPausedMenu(pos, size) {
@@ -1085,6 +1114,7 @@ function gameInit() {
     music_instanced.pause();
   }
   new UISystemPlugin();
+  videoAnimation = "/videos/animation-game.mp4";
   cameraPos = vec2(50, 10);
   uiSystem.defaultSoundClick = new Sound([0.5, 0, 440]);
   uiSystem.defaultCornerRadius = 20;

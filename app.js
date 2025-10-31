@@ -55,6 +55,8 @@ let stilt_Bar = null;
 let soundEffectScreen = null;
 let soundEffectDogs = null;
 let soundEffectCuttingStilt = null;
+let soundEffectVolumen = 0.5;
+let musicVolumen = 1.0;
 let music_bg = null;
 let music_instanced = null;
 function playEffectScreenSound() {
@@ -81,6 +83,7 @@ function startGame() {
   createGameObjects();
   gameState = GAME_STATE.PLAYING;
   if (music_instanced) {
+    music_instanced.setVolume(musicVolumen);
     music_instanced.resume();
   }
 }
@@ -261,13 +264,6 @@ class Enemy extends EngineObject {
     this.rightBound = pos.x + this.range / 2;
     this.spawner = null;
     this.spawnX = pos.x;
-    soundEffectDogs = new SoundWave(
-      "/audios/chihuahua.mp3",
-      0,
-      1,
-      0.7,
-      playEffectScreenSound
-    );
     const animData = ListsSpriteFrameEnemy.walk;
     const tileInfo = new TileInfo(
       vec2(0, 0),
@@ -279,6 +275,15 @@ class Enemy extends EngineObject {
   update() {
     if (gameState !== GAME_STATE.PLAYING) {
       return;
+    }
+    if (gameState === GAME_STATE.PAUSED) {
+      if (this.soundInstance && this.soundInstance.pause) {
+        this.soundInstance.pause();
+      }
+    } else {
+      if (this.soundInstance && this.soundInstance.unpause) {
+        this.soundInstance.unpause();
+      }
     }
     const dx = this.player.pos.x - this.pos.x;
     const dy = this.player.pos.y - this.pos.y;
@@ -348,13 +353,6 @@ class Enemy extends EngineObject {
       if (velocity_time > 1) {
         velocity_time -= 1;
       }
-      soundEffectDogs = new SoundWave(
-        "/audios/chihuahua_angry.mp3",
-        0,
-        1,
-        0.7,
-        playEffectScreenSound
-      );
       this.destroy();
     }
   }
@@ -370,6 +368,8 @@ class EnemySpawner extends EngineObject {
     this.maxEnemies = 8;
     this.minX = 5;
     this.maxX = 95;
+    this.spawnSound = new SoundWave("/audios/chihuahua.mp3", 0, 1, 0.7);
+    this.destroySound = new SoundWave("/audios/chihuahua_angry.mp3", 0, 1, 0.7);
   }
   update() {
     if (gameState !== GAME_STATE.PLAYING) {
@@ -409,6 +409,9 @@ class EnemySpawner extends EngineObject {
   spawnEnemy() {
     const xPos = this.getRandomXPosition();
     if (xPos === null) return;
+    if (gameState === GAME_STATE.PLAYING && this.spawnSound) {
+      this.spawnSound.play().setVolume(soundEffectVolumen);
+    }
     const pos = vec2(xPos, 3);
     const newEnemy = new Enemy(pos);
     newEnemy.player = this.player;
@@ -424,6 +427,9 @@ class EnemySpawner extends EngineObject {
       this.activeEnemies.splice(index, 1);
     }
     this.timer = this.spawnInterval;
+    if (gameState === GAME_STATE.PLAYING && this.destroySound) {
+      this.destroySound.play().setVolume(soundEffectVolumen);
+    }
   }
   destroyAllSpawned() {
     for (const enemy of this.activeEnemies) {

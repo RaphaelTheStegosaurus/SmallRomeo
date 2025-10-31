@@ -444,7 +444,7 @@ class CloudParticles extends ParticleEmitter {
       0,
       200,
       PI, //emitConeAngle
-      0,
+      new TileInfo(vec2(0, 0), vec2(400, 400), 11),
       hsl(0, 0, 0, 0.5),
       hsl(0, 0, 1, 0.5),
       hsl(0, 0, 0, 0),
@@ -1137,4 +1137,5 @@ engineInit(gameInit, gameUpdate, gameUpdatePost, gameRender, gameRenderPost, [
   "/tiles/start.png",
   "/tiles/game_over.jpg",
   "/tiles/win_screen.png",
+  "/tiles/circle_masking.svg",
 ]);

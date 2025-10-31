@@ -53,23 +53,10 @@ let gameObjects = [];
 let paused_Button = null;
 let stilt_Bar = null;
 let soundEffectScreen = null;
-let soundEffectDogs = null;
-let soundEffectCuttingStilt = null;
 let soundEffectVolumen = 0.5;
 let musicVolumen = 1.0;
 let music_bg = null;
 let music_instanced = null;
-function playEffectScreenSound() {
-  if (soundEffectScreen) {
-    soundEffectScreen.play();
-  }
-  if (soundEffectDogs) {
-    soundEffectDogs.play();
-  }
-  if (soundEffectCuttingStilt) {
-    soundEffectCuttingStilt.play();
-  }
-}
 function setBgMusic() {
   music_bg = new SoundWave("/audios/music_game.mp3", 0, 1, 0.7, playBgMusic);
 }
@@ -137,8 +124,6 @@ function destroyAndResetGame() {
   paused_Button = null;
   stilt_Bar = null;
   soundEffectScreen = null;
-  soundEffectDogs = null;
-  soundEffectCuttingStilt = null;
 }
 ///////////
 
@@ -485,6 +470,7 @@ class WoodTool extends EngineObject {
     this.spawner = null;
     this.spawnX = pos.x;
     this.tileInfo = new TileInfo(vec2(0, 0), vec2(500, 500), 4);
+    this.soundDestroy = new SoundWave("/audios/cutting_stilt.mp3", 0, 1, 0.7);
   }
 
   update() {
@@ -505,14 +491,10 @@ class WoodTool extends EngineObject {
         if (velocity_unity > 1 && !isVelocityUnityIsMax) {
           isVelocityUnityIsMax = true;
         }
+        if (this.soundDestroy) {
+          this.soundDestroy.play().setVolume(soundEffectVolumen);
+        }
         this.spawner.notifyDestroyed(this.spawnX);
-        soundEffectCuttingStilt = new SoundWave(
-          "/audios/cutting_stilt.mp3",
-          0,
-          1,
-          0.7,
-          playEffectScreenSound
-        );
         this.destroy();
       }
     }

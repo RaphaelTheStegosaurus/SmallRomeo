@@ -1085,6 +1085,7 @@ function gameInit() {
     music_instanced.pause();
   }
   new UISystemPlugin();
+  cameraPos = vec2(50, 10);
   uiSystem.defaultSoundClick = new Sound([0.5, 0, 440]);
   uiSystem.defaultCornerRadius = 20;
   uiSystem.defaultShadowColor = CYAN;

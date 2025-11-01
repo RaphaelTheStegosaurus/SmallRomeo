@@ -20,7 +20,7 @@
   - [x] Agregar mecánica de bajar mas rápido si te acercas a la herramienta que lanza el suegro que esta desaparezca del escenario pero aumente el valor de tamaño de corte.
   - [x] Agregar mecanica de ganar
 - [ ] Agregar Sprites Oficiales
-  - [ ] Crear Sprites para el Personaje
+  - [x] Crear Sprites para el Personaje
     - [x] Sprite para Moverse
     - [x] Sprite para Estando Quieto
     - [ ] Sprite para cuando estas apunto de perder
@@ -40,7 +40,7 @@
       - [x] Sprite de Plantas
       - [x] Sprite de Arbustos
       - [x] Sprites Otros detalles
-  - [ ] Sprite de story animation
-    - [ ] Sprite de escena de Introducción
-    - [ ] Sprite de escena de Perder
-    - [ ] Sprite de escena de Ganar
+  - [x] Sprite de story animation
+    - [x] Sprite de escena de Introducción
+    - [x] Sprite de escena de Perder
+    - [x] Sprite de escena de Ganar

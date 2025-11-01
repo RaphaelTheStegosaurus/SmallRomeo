@@ -1,4 +1,5 @@
 "use strict";
+const videoTag = document.getElementsByTagName("video");
 let backgroundTexture;
 let bg;
 const ListsSpriteFramePlayer = {
@@ -69,7 +70,7 @@ function playBgMusic() {
 function startGame() {
   destroyAndResetGame();
   createGameObjects();
-  gameState = GAME_STATE.PLAYING;
+  gameState = GAME_STATE.ANIMATION_INTRO;
   if (music_instanced) {
     music_instanced.setVolume(musicVolumen);
     music_instanced.resume();
@@ -921,6 +922,14 @@ class Menu extends EngineObject {
 
     const startButton = new UIButton(vec2(200, 0), vec2(200, 75), "start");
     startButton.onClick = () => {
+      const videoElement = videoTag[0];
+      if (videoElement) {
+        videoElement.currentTime = 0;
+        videoElement.play().catch((e) => {
+          console.error("Video play blocked on start menu click:", e);
+          startGame();
+        });
+      }
       startGame();
     };
     startButton.font = `"Orbitron", sans-serif`;
@@ -937,21 +946,33 @@ class Menu extends EngineObject {
   }
   loadAnimation(pos, size) {
     const container = new UIObject(pos, size);
-    if (videoAnimation) {
-      const video = new UIVideo(vec2(0, 0), size, videoAnimation, true, false);
-      container.addChild(video);
+    const video = new UIVideo(vec2(0, 0), size, videoAnimation);
+    container.addChild(video);
+    const videoElement = videoTag[0];
+    if (videoElement) {
+      try {
+        const playPromise = videoElement.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((error) => {
+            console.error("Video playback prevented:", error);
+          });
+        }
+      } catch (e) {
+        console.error("Error attempting to play video:", e);
+      }
     } else {
-      const defaultText = new UIText(
-        vec2(0, -150),
-        vec2(400, 80),
-        "Error to load video, please skip"
-      );
-      container.addChild(defaultText);
+      console.error("Video element not found in videoTag[0]");
     }
+
     const skipButton = new UIButton(vec2(300, -150), vec2(200, 75), "Skip");
     skipButton.font = `"Orbitron", sans-serif`;
     skipButton.color = rgb(0, 1, 1);
     skipButton.onClick = () => {
+      const videoElement = videoTag[0];
+      if (videoElement) {
+        videoElement.pause();
+        videoElement.currentTime = 0;
+      }
       gameState = GAME_STATE.PLAYING;
     };
     container.addChild(skipButton);
@@ -991,6 +1012,13 @@ class Menu extends EngineObject {
     restartButton.font = `"Orbitron", sans-serif`;
     restartButton.color = rgb(0, 1, 0);
     restartButton.onClick = () => {
+      const videoElement = videoTag[0];
+      if (videoElement) {
+        videoElement.currentTime = 0;
+        videoElement
+          .play()
+          .catch((e) => console.error("Video play blocked on restart:", e));
+      }
       container.visible = false;
       setTimeout(() => {
         startGame();
@@ -1038,6 +1066,13 @@ class Menu extends EngineObject {
     restartButton.font = `"Orbitron", sans-serif`;
     restartButton.color = rgb(0, 1, 0);
     restartButton.onClick = () => {
+      const videoElement = videoTag[0];
+      if (videoElement) {
+        videoElement.currentTime = 0;
+        videoElement
+          .play()
+          .catch((e) => console.error("Video play blocked on restart:", e));
+      }
       container.visible = false;
       setTimeout(() => {
         startGame();

@@ -1,8 +1,8 @@
 # Documento de Diseño de Juego (GDD)
 
-**Título del Juego:** Small Romeo
-**Versión del Documento:** 1.0
-**Fecha de Última Modificación:** 24/10/2025
+**Título del Juego:** Romeo, you're small
+**Versión del Documento:** 2.0
+**Fecha de Última Modificación:** 11/01/2025
 **Autor / Estudio:** Rafael Alberto Serrato Morales/RaphaelAlbertoTheStegosaurus
 
 ---
@@ -10,7 +10,7 @@
 ## 1. Introducción
 
 ### 1.1. Resumen del Concepto 
-> Un juego de Puzzle/Plataforma con control de tiempo y agilidad para tratar de sobrevir el mayor tiempo para llegar a tu destino o terminar perdiendo.
+> Un juego de Puzzle/Plataforma con agilidad y movimiento para superar llegar a la meta usando los objetos en el escenario pero a su vez obteniendo objetos que te impedirán conseguir tu meta 
 
 ### 1.2. Propósito y Visión
 
@@ -23,11 +23,11 @@
 
 1.  **Moverse:** El control de personaje debe ser inmediato para llegar del punto A al punto B.
 2.  **Coger los items del escenario:** Debes de recoger la mayoría de ramas para aumentar el tamaño de tus zancos caseros o sino los perros te alcanzaran.  
-3.  **El tiempo es primordial:**Ya que si el tiempo pasa tus zancos disminuirán de tamaño tras ser devorados lentamente ppr los perros. 
+3.  **El tiempo es primordial:**Ya que si el tiempo pasa tus zancos disminuirán de tamaño tras ser devorados lentamente ppr los perros, ademas que recogerán las herramientas para devorar mas los zancos. 
 
 ### 1.4. Alcance del Proyecto 
 
-* **Duración Estimada:** 5 Dias.
+* **Duración Estimada:** 9 Dias.
 * **Contenido Mínimo Viable (MVP):** 1 nivel funcional.
 
 ---
@@ -38,11 +38,11 @@
 
 #### 2.1.1. Movimiento Básico
 * **Moverse:** El Jugador podrá moverse derecha e izquierda sin ningún problema.
-* **Saltar:** EL jugador podrá saltar para alcanzar los items que se encuentren fuer de su alcance.
+* **Saltar:** EL jugador podrá saltar para alcanzar los items que se encuentren fuera de su alcance y poder dar un salto a la plataforma de meta.
 
 #### 2.1.2. Manipulación del Tamaño de sus Zancos 
 * **Aumentar:** Estos podrá aumentarlos cada vez que alcance un item le proporcionar una altura extra a su altura actual.
-* **Disminución:** Pasando cada 2 segundos estos bajaran de altura y cuando la cantidad de remolino de perros aumente estos aumentaran la cantidad a bajar.
+* **Disminución:** Durante tu obtención de mas ramas te sumaras a tu nube de destruction que esta bajo a tus pies a mas perros y estos Iran devorando tus zancos haciendo que bajen su tamaño ademas de usar la herramienta tirada para destruir a mayor cantidad por segundos.
 
 
 ### 2.2. Controles
@@ -51,6 +51,7 @@
 | :------ | :-------------------- | :------------------------ |
 | Moverse | A,D/Derecha,Izquierda | Swipe Derecho o Izquierdo |
 | Salto   | W / Arriba            | Doble touch               |
+| Pausa   | Presionando el Botón  | Presionando el Botón      |
 
 ### 2.3. Progresión y Rejugabilidad
 
@@ -61,7 +62,7 @@
 ## 3. Historia y Narrativa
 
 ### 3.1. Premisa de la Historia 
-Un joven que va a ver a su novia a escondidas y este entra su casa, pero como es muy pequeño para verla en su balcón usa las ramas de un árbol para hacerse de unos zancos pero su suegro lo ve por la ventana maltratando su árbol y envía a su jauría de perros chihuahuas y este tiene que poder a ver a su novia o sufrir de que lo muerdan los perros. 
+Un joven que va a ver a su novia a escondidas y este entra su casa, pero como es muy pequeño para verla en su balcón usa las ramas de un árbol para hacerse de unos zancos, pero al abrirse una puerta sale una jauría de perros chihuahuas y este tiene que poder a ver a su novia o sufrir de que lo muerdan los perros. 
 
 ### 3.2. Mundo del Juego (Setting)
 * **Ambientación:** Una casa Grande estilo colonial, con un extenso patio, con un árbol grande de fondo.
@@ -70,57 +71,45 @@ Un joven que va a ver a su novia a escondidas y este entra su casa, pero como es
 
 * **Protagonista (Small Romeo):** Un chaval medio vago, galán engreído pero aveces es gracioso cuando la vida le da una lección.
 * **La Novia** Una chica hermosa que le gusta estudiar y que ama a Small Romeo a pesar de estar Bajo de altura.
-* **El Suegro** El papa de la novia un tipo que lo mas posible trabajo en la CIA o en la Interpole, da mala espina a la hora de conocerlo.
 
 ---
-
-[c] trabajr luego
 ## 4. Arte y Audio
 
 ### 4.1. Estilo Artístico
-* **Dirección de Arte:** **Pixel Art** de alta resolución (16-bit) con iluminación dinámica moderna.
-* **Paleta de Colores:** Contrastes fuertes; tonos fríos (azules/morados) para el tiempo normal y tonos cálidos (naranjas/rojos) al ralentizar el tiempo.
-* **Referencias Visuales:** *Dead Cells*, *Enter the Gungeon*.
+* **Dirección de Arte:** **Pixel Art** Raphael Alberto
+* **Arte de Sprites** Fue con uso de prompt a Gemini para agilizar el trabajo y algunos como la ramas y los stilts fueron creados por su servidor en la pagina de [Piskelapp](https://www.piskelapp.com)
+* **Animacion** Fue una creación de frames a frames de **Gemini** con prompts de los sprites ya creados por **Gemini** y bocetos hechos a libreta para crear la escenas o el frame  que al final en vez de usar una IA para que se me generar una animación recurrí a crear la animación con **HTML/CSS/JS** y grabarlo con la extension de **Live Screen Recorder**, 
 
 ### 4.2. Interfaz de Usuario (UI) y Experiencia de Usuario (UX)
-* **Estilo del UI:** Limpio, minimalista, con un toque futurista. La barra de Cronos debe ser el elemento más prominente del HUD.
+* **Estilo del UI:** Minimalist pero con el fondo que cuente la historia del juego o en que parte del juego e=te encuentras con la ubicación de los botones que no cubra las imágenes según el menu donde te ecuestres.
 * **HUD:**
-    * Barra de Salud (Esquina superior izquierda).
-    * Barra de Cronos (Centro inferior, gran visibilidad).
-    * Iconos de Habilidades (Esquina inferior derecha).
-
+    * Medidor de Stilt (Esquina superior izquierda).
+    * Boton de Pausa (Esquina superior izquierda).
 ### 4.3. Sonido
-* **Dirección Musical:** Música electrónica y sintetizadores con influencias *synthwave* para el combate, y piezas ambientales con ecos para el *Hub*.
-* **SFX:** Sonidos de ataque con mucho "punch" (*heavy hits*). Uso de efectos de eco y *pitch-down* al manipular el tiempo.
+* **Dirección Musical:** Pieza musical en bucle tomada de [Pixabay](https://pixabay.com/) por el compositor Maksym Maiko.
+* **SFX:** Algunos eggectos de sonido fueron tomados de los ejemplos creados de Zzfx de LittleJS Engine y otros fueron de [freesound](https://freesound.org/).
 
 ---
 
 ## 5. Requisitos Técnicos
 
 ### 5.1. Tecnología y Herramientas
-* **Motor de Juego:** Unity 2023 LTS.
-* **Lenguajes de Programación:** C#.
+* **Motor de Juego:** LittleJS Engine.
+* **Lenguajes de Programación:** Vainilla JavaScript.
 * **Control de Versiones:** Git (GitHub/GitLab).
+* **Editor** VSCode
 
 ### 5.2. Requisitos de Hardware
-* **Mínimos (PC):** Intel Core i3 (4ta gen), 4GB RAM, Gráfica compatible con OpenGL 4.5.
-* **Recomendados (PC):** Intel Core i5 (8va gen), 8GB RAM, NVIDIA GTX 1060.
+* **Mínimos:** Por el momento solo es compatible en computadora. 
 
 ---
 
 ## 6. Gestión del Proyecto
 
-### 6.1. Hitos Principales
 
-| Hito               | Fecha Límite | Estado | Descripción                                                                      |
-| :----------------- | :----------- | :----- | :------------------------------------------------------------------------------- |
-| **Alpha Jugable**  | 3 Meses      | TO DO  | Protagonista con todas las mecánicas principales. Nivel 1 completo.              |
-| **Beta Cerrada**   | 8 Meses      | TO DO  | Contenido completo (3 niveles, 1 jefe, todas las habilidades) y balance inicial. |
-| **Lanzamiento EA** | 12 Meses     | TO DO  | Versión 1.0 para Acceso Anticipado en Steam.                                     |
+### 6.1. Historial de Versiones
 
-### 6.2. Historial de Versiones
-
-| Versión | Fecha      | Autor  | Cambios Clave                                               |
-| :------ | :--------- | :----- | :---------------------------------------------------------- |
-| 0.1     | 01/10/2025 | J. Doe | Primer borrador. Se introduce la mecánica de Ralentización. |
-| 1.0     | 24/10/2025 | J. Doe | GDD base finalizado. Listo para el inicio de la producción. |
+| Versión | Fecha      | Autor | Cambios Clave                                                          |
+| :------ | :--------- | :---- | :--------------------------------------------------------------------- |
+| 0.1     | 24/10/2025 | RASM  | Primer borrador del proyecto e interaction con el motor de juego.      |
+| 1.0     | 01/11/2025 | RASM  | Juego version Beta Terminado y con Deploy en GitHub Pages y Hostinger. |

@@ -40,9 +40,21 @@
 * **Moverse:** El Jugador podrá moverse derecha e izquierda sin ningún problema.
 * **Saltar:** EL jugador podrá saltar para alcanzar los items que se encuentren fuera de su alcance y poder dar un salto a la plataforma de meta.
 
-#### 2.1.2. Manipulación del Tamaño de sus Zancos 
-* **Aumentar:** Estos podrá aumentarlos cada vez que alcance un item le proporcionar una altura extra a su altura actual.
-* **Disminución:** Durante tu obtención de mas ramas te sumaras a tu nube de destruction que esta bajo a tus pies a mas perros y estos Iran devorando tus zancos haciendo que bajen su tamaño ademas de usar la herramienta tirada para destruir a mayor cantidad por segundos.
+#### 2.1.2. Mecanica de la manipulacion de stilts
+* **Variables**
+- * **STILT_STAR_HEIGTH** equivalente a 5 Unidades al principio.
+- * **current_stilt_height** es equivalente a el valor actual de la altura de las stilts y como mínimo sera 0.1 que sera el valor de la derrota.
+- * **STILT_GROW_UP** equivalente a 2 unidades que se agregaran cada vez que colisionas con el objeto Stick
+- * **velocity_time** Es el valor del intervalo de tiempo en el que se te quitara altura a **current_stilt_height** con el valor de **velocity_unity**, cuyo valor empieza en 15s pero ira bajando hasta llegar a 1s como mínimo.
+- * **velocity_unity** Es el valor de la unidad que restara a **current_stilt_height** cada vez que pase el intervalo de tiempo de **velocity_unity**, empezando en 0.1 unidades y llegando a 1.5 unidades como máximo.
+- * **DogChihuahua** cada collision resta -1 el valor de **velocity_time** 
+- * **WoodTools** cada collision aumenta +0.1 el valor de **velocity_unity** 
+- * **Stick** cada collision aumenta +2 el valor de **current_stilt_height**
+
+#### 2.1.3 Spawners
+* **Spawn de Sticks** Estos aparecerán cada 0.65s en  posiciones aleatorias en el escenario mientras saltes abecés estar altas o bajas solo puedes cojeras el personaje no los stilt. 
+* **Spawn de Dogs Chihuahua** Estos aparecerán cada 2s en pociones en el suelo que estos patrullaran y cuando Estes cerca te seguirán hasta reducir el tiempo de la velocidad con la que reducen las stilts velocidad=cantidad/tiempo
+* **Spawn de Wood Tools** Estos aparecerán de forma flotante cada 3s en el escenario y estos solo podrán ser recogidos cor la nube de perros que aumentara la cantidad de la velocidad que consumen tus stilts velocidad=cantidad/tiempo
 
 
 ### 2.2. Controles
@@ -55,7 +67,9 @@
 
 ### 2.3. Progresión y Rejugabilidad
 
-* **Meta-Progresión:** Entre intentos, el jugador tendra que llegar a la meta para completar este único nivel o superar el tiempo que sobrevive.
+* **Estado Inicial:** El jugador iniciara con el valor de 5 unidades del tamaño de los stilts pero no es suficiente para alcanzar el balcón el cual deberá recoger las ramas para aumentar mas 2 unidades a su valor pero este valor actual se vera afectado por la reduction de los still que variara entre que velocidad se resta su stilt 
+* **Meta-Progresión:** El jugador ganara cuando pueda alcanzar el balcón donde esta su novia podrá usar un salto para llegar y liberarse las stilts
+* **Derrota** El jugador perderá su las stilts son demasiadamente pequeñas que los perros chihuahuas te alcanzaran y te morderán.
 
 ---
 

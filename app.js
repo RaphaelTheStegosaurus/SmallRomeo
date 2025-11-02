@@ -60,7 +60,7 @@ let music_bg = null;
 let music_instanced = null;
 let videoAnimation = null;
 function setBgMusic() {
-  music_bg = new SoundWave("/audios/music_game.mp3", 0, 1, 0.7, playBgMusic);
+  music_bg = new SoundWave("./audios/music_game.mp3", 0, 1, 0.7, playBgMusic);
 }
 function playBgMusic() {
   if (music_bg) {
@@ -84,7 +84,7 @@ function playEffectScreenSound() {
 function endGame() {
   if (gameState === GAME_STATE.PLAYING) {
     soundEffectScreen = new SoundWave(
-      "/audios/gameover.mp3",
+      "./audios/gameover.mp3",
       0,
       1,
       0.7,
@@ -104,7 +104,7 @@ function pauseGame() {
 function winGame() {
   if (gameState === GAME_STATE.PLAYING) {
     soundEffectScreen = new SoundWave(
-      "/audios/win.mp3",
+      "./audios/win.mp3",
       0,
       1,
       0.7,
@@ -361,8 +361,13 @@ class DogChihuahuaSpawner extends EngineObject {
     this.maxEnemies = 8;
     this.minX = 5;
     this.maxX = 95;
-    this.spawnSound = new SoundWave("/audios/chihuahua.mp3", 0, 1, 0.7);
-    this.destroySound = new SoundWave("/audios/chihuahua_angry.mp3", 0, 1, 0.7);
+    this.spawnSound = new SoundWave("./audios/chihuahua.mp3", 0, 1, 0.7);
+    this.destroySound = new SoundWave(
+      "./audios/chihuahua_angry.mp3",
+      0,
+      1,
+      0.7
+    );
   }
   update() {
     if (gameState !== GAME_STATE.PLAYING) {
@@ -517,7 +522,7 @@ class WoodToolSpawner extends EngineObject {
     this.maxX = 90;
     this.minDistance = 8;
     this.woodToolSoundInstance = null;
-    this.soundDestroy = new SoundWave("/audios/cutting_stilt.mp3", 0, 1, 0.7);
+    this.soundDestroy = new SoundWave("./audios/cutting_stilt.mp3", 0, 1, 0.7);
   }
   update() {
     if (gameState !== GAME_STATE.PLAYING) {
@@ -1192,16 +1197,16 @@ function gameRenderPost() {
 ///////////////////////////////////////////////////////////////////////////////
 // Startup LittleJS Engine
 engineInit(gameInit, gameUpdate, gameUpdatePost, gameRender, gameRenderPost, [
-  "/tiles/tile_ground.png",
-  "/tiles/player-use-stilt.png",
-  "/tiles/bg.png",
-  "/tiles/dog.png",
-  "/tiles/tools.png",
-  "/tiles/stick_stilt.png",
-  "/tiles/balcony.png",
-  "/tiles/player-jump.png",
-  "/tiles/start.png",
-  "/tiles/game_over.jpg",
-  "/tiles/win_screen.png",
-  "/tiles/circle_masking.svg",
+  "./tiles/tile_ground.png",
+  "./tiles/player-use-stilt.png",
+  "./tiles/bg.png",
+  "./tiles/dog.png",
+  "./tiles/tools.png",
+  "./tiles/stick_stilt.png",
+  "./tiles/balcony.png",
+  "./tiles/player-jump.png",
+  "./tiles/start.png",
+  "./tiles/game_over.jpg",
+  "./tiles/win_screen.png",
+  "./tiles/circle_masking.svg",
 ]);
